@@ -1,0 +1,8 @@
+.page-layout {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: var(--spacing-1);
+  height: 100vh;
+  height: 100dvh;
+}

@@ -1,0 +1,12 @@
+* {
+  box-sizing: border-box;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}

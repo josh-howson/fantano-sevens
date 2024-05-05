@@ -1,0 +1,15 @@
+body {
+  font-size: var(--font-size-base);
+  margin: 0;
+  background-color: var(--bg-color);
+}
+
+.button-secondary {
+  padding: 8rem 16rem;
+  border: 2rem solid currentColor;
+  background: none;
+  border-radius: var(--border-radius);
+  font-weight: bold;
+  color: var(--text-color);
+  font-size: 14rem;
+}
