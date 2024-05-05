@@ -126,8 +126,6 @@ onMounted(syncAlbumHistoryRef);
 </script>
 
 <template>
-  <button class="show-history button-secondary" @click="handleShowHistory">{{showHistory ? 'Back' : `History${albumHistory.length ? ` (${albumHistory.length})`: ''}` }}</button>
-
   <div class="page-layout" v-if="!showHistory" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
 
     <MinimumScore v-model="minRating" />
@@ -155,6 +153,8 @@ onMounted(syncAlbumHistoryRef);
       v-if="currentAlbum && shuffleStatus === 'picked'"
       :album="currentAlbum"
     />
+
+    <button class="show-history button-secondary" @click="handleShowHistory">{{showHistory ? 'Back' : `History${albumHistory.length ? ` (${albumHistory.length})`: ''}` }}</button>
   </div>
   <table class="history" v-else>
     <thead>
@@ -176,10 +176,9 @@ onMounted(syncAlbumHistoryRef);
 
 <style scoped>
 .show-history {
-  position: fixed;
-  bottom: 0;
-  right: 0;
   margin: var(--spacing-1);
+  margin-top: auto;
+  margin-left: auto;
 }
 
 .history {
