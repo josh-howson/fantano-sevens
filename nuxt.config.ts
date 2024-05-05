@@ -16,5 +16,12 @@ export default defineNuxtConfig({
     '@/assets/reset.css',
     '@/assets/typography.css',
     '@/assets/variables.css',
-  ]
+  ],
+  app: {
+    head: {
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      ],
+    }
+  }
 })
