@@ -156,7 +156,8 @@ onMounted(syncAlbumHistoryRef);
 
     <button class="show-history button-secondary" @click="handleShowHistory">{{showHistory ? 'Back' : `History${albumHistory.length ? ` (${albumHistory.length})`: ''}` }}</button>
   </div>
-  <table class="history" v-else>
+  <div class="history" v-else>
+  <table>
     <thead>
       <td>Album</td>
       <td>Logged</td>
@@ -172,6 +173,8 @@ onMounted(syncAlbumHistoryRef);
       </td>
     </tr>
   </table>
+  <button class="show-history button-secondary" @click="handleShowHistory">Back</button>
+  </div>
 </template>
 
 <style scoped>
@@ -183,6 +186,10 @@ onMounted(syncAlbumHistoryRef);
 
 .history {
   padding: var(--spacing-1);
+  display: flex;
+  flex-flow: column nowrap;
+  gap: var(--spacing);
+  height: 100dvh;
 }
 
 .randomize-button {
