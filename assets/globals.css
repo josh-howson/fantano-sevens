@@ -1,5 +1,4 @@
 body {
-  font-size: var(--font-size-base);
   margin: 0;
   background-color: var(--bg-color);
 }

@@ -136,7 +136,7 @@ onUnmounted(() => {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  perspective: 100vh;
+  perspective: 80vh;
   padding: 0 var(--spacing-1);
   width: 100%;
 }
