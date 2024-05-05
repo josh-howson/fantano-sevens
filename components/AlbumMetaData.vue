@@ -24,11 +24,11 @@ defineProps<Props>();
   text-align: center;
   margin-top: auto;
   padding: var(--spacing-1);
-  padding-bottom: 48rem;
+  padding-bottom: 48px;
 }
 
 .fantano-score {
-  font-size: 20rem;
+  font-size: 20px;
   font-weight: bold;
 }
 </style>

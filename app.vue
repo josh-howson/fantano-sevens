@@ -188,13 +188,13 @@ onMounted(syncAlbumHistoryRef);
 
 .randomize-button {
   flex: 0 0 auto;
-  padding: 16rem 32rem;
+  padding: 16px 32px;
   background-color: var(--primary-color);
-  border: 2rem solid var(--text-color);
+  border: 2px solid var(--text-color);
   border-radius: var(--border-radius);
   font-weight: bold;
   color: var(--text-color);
-  font-size: 16rem;
+  font-size: 16px;
 }
 
 .randomize-button:disabled {

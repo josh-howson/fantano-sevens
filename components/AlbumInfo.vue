@@ -142,8 +142,8 @@ onUnmounted(() => {
 }
 
 .album-cover {
-  margin-top: 16rem;
-  width: 200rem;
+  margin-top: 16px;
+  width: 200px;
   aspect-ratio: 1 / 1;
   transition: all .5s ease-out;
 }
@@ -153,7 +153,7 @@ onUnmounted(() => {
   height: 100%;
   object-fit: cover;
   border-radius: var(--border-radius);
-  border: 2rem solid var(--text-color);
+  border: 2px solid var(--text-color);
   transition: transform 0.5s;
   transform-style: preserve-3d;
 }
@@ -164,21 +164,21 @@ onUnmounted(() => {
 
 .picked {
   width: 100%;
-  max-width: 400rem;
+  max-width: 400px;
 }
 
 .album-text {
   text-align: center;
-  padding: 16rem;
+  padding: 16px;
 }
 
 .title {
-  font-size: 24rem;
+  font-size: 24px;
   font-weight: bold;
 }
 
 .artist {
-  font-size: 16rem;
+  font-size: 16px;
 }
 
 .album-actions {

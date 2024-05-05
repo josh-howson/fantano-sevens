@@ -4,11 +4,11 @@ body {
 }
 
 .button-secondary {
-  padding: 8rem 16rem;
-  border: 2rem solid currentColor;
+  padding: 8px 16px;
+  border: 2px solid currentColor;
   background: none;
   border-radius: var(--border-radius);
   font-weight: bold;
   color: var(--text-color);
-  font-size: 14rem;
+  font-size: 14px;
 }

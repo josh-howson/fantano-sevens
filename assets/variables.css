@@ -2,11 +2,11 @@
   --primary-color: #FFCC00;
   --text-color: #000;
   --bg-color: #FFEC8B;
-  --border-radius: 8rem;
-  --font-size-large: 24rem;
-  --font-size-medium: 20rem;
-  --font-size-small: 16rem;
-  --spacing-1: 20rem;
+  --border-radius: 8px;
+  --font-size-large: 24px;
+  --font-size-medium: 20px;
+  --font-size-small: 16px;
+  --spacing-1: 20px;
   --artwork-size: min(30vw, 25vh);
   --artwork-large-size: min(40vw, 35vh);
 }
