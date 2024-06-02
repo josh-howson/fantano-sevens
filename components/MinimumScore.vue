@@ -20,6 +20,7 @@ const handleDecrement = () => setScore(minimumScore.value - 1);
       {{ minimumScore < range[1] ? `${minimumScore}+` : minimumScore }} <button class="button-icon button-secondary" @click="handleIncrement"
         :disabled="minimumScore >= range[1]">+</button>
     </div>
+
     <span>fantano minimum</span>
   </div>
 </template>
@@ -36,7 +37,7 @@ const handleDecrement = () => setScore(minimumScore.value - 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-1);
+  gap: var(--spacing-1\/2);
   font-size: 12px;
   transition: all var(--transition-duration) var(--easing);
   opacity: 1;
