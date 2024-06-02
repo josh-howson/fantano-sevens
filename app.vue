@@ -4,6 +4,7 @@ import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
 import { preloadImage } from '~/utilities/image';
 import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, removeFromHistory } from '~/utilities/history';
 import IconHistory from '~/components/icons/IconHistory.vue';
+import HistoryView from '~/components/HistoryView.vue';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -164,26 +165,12 @@ onMounted(syncAlbumHistoryRef);
     </div>
   </div>
 
-  <div class="history" v-else>
-    <table>
-      <thead>
-        <td>Album</td>
-        <td>Logged</td>
-        <td>Liked</td>
-        <td>Actions</td>
-      </thead>
-      <tr v-for="album in albumHistory">
-        <td>{{ album.title }} - {{ album.artist }}</td>
-        <td>{{ album.logged }}</td>
-        <td>{{ album.liked }}</td>
-        <td>
-          <button class="" @click="handleRemoveFromHistory(album)">x</button>
-        </td>
-      </tr>
-    </table>
-
-    <button class="show-history" @click="handleCloseHistory">Back</button>
-  </div>
+  <HistoryView
+    :album-history="albumHistory"
+    @close="handleCloseHistory"
+    @remove="handleRemoveFromHistory"
+    v-else
+  />
 </template>
 
 <style scoped>
