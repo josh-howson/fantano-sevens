@@ -1,4 +1,4 @@
-import type { Album, FantanoAlbum, SpotifySearchResponseRaw } from "~/types/Album";
+import type { Album, FantanoAlbum, HistoryAlbum, SpotifySearchResponseRaw } from "~/types/Album";
 
 const getSpotifyAccessToken = async (clientId: string, clientSecret: string): Promise<string> => {
   const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -48,7 +48,7 @@ export const getRandomAlbums = async (allAlbums: FantanoAlbum[], minRating: numb
       if (!albumToPush.spotifyAlbum) throw new Error(`Could not successfully retrieve album info for ${formatAlbumTitleAndArtist(albumToPush)}`)
       randomAlbums.push(albumToPush);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   } while (randomAlbums.length < ALBUM_COUNT && albumPool.length);
 
@@ -62,3 +62,21 @@ export const formatAlbumTitleAndArtist = (album: Album) => {
 export const getAlbumSpotifyUrl = (album: Album) => {
   return album.spotifyAlbum.external_urls.spotify;
 };
+
+export const getAlbumImage = (album: Album, size: 'medium' | 'small' = 'medium') => {
+  if (size === 'small')
+    return album.spotifyAlbum.images[2];
+
+  return album.spotifyAlbum.images[1];
+};
+
+export const getHistoryAlbumFromAlbum = (album: Album, liked: boolean = false, logged: boolean = false): HistoryAlbum => {
+  return {
+    albumCoverUrl: getAlbumImage(album).url,
+    artist: album.artist,
+    title: album.title,
+    liked: liked,
+    logged: logged,
+    spotifyUrl: getAlbumSpotifyUrl(album),
+  };
+}

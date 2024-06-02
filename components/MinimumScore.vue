@@ -16,9 +16,9 @@ const handleDecrement = () => setScore(minimumScore.value - 1);
 <template>
   <div class="minimum-score">
     <div class="number-range">
-      <button class="button-icon button-secondary" @click="handleDecrement" :disabled="minimumScore <= range[0]">-</button>
+      <button class="button-icon button-secondary" @click="handleDecrement" :disabled="minimumScore <= range[0]" aria-label="decrease minimum">-</button>
       {{ minimumScore < range[1] ? `${minimumScore}+` : minimumScore }} <button class="button-icon button-secondary" @click="handleIncrement"
-        :disabled="minimumScore >= range[1]">+</button>
+        :disabled="minimumScore >= range[1]" aria-label="increase minimum">+</button>
     </div>
 
     <span>fantano minimum</span>

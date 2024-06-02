@@ -73,4 +73,6 @@ export type HistoryAlbum = {
   artist: string;
   logged: boolean;
   liked: boolean;
+  albumCoverUrl: string;
+  spotifyUrl: string;
 };

@@ -9,5 +9,6 @@
   --bg-color: var(--bg-surface);
   --easing: ease;
   --transition-duration: .5s;
+  --transition-duration-fast: .1s;
   --enter-scale: .6;
 }

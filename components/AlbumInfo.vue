@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import type { Album, ShuffleStatus } from '~/types/Album';
 import IconGenre from '~/components/icons/IconGenre.vue';
+import type { Album, ShuffleStatus } from '~/types/Album';
+import { getAlbumImage } from '~/utilities/album';
 
 const props = defineProps<{
   album: Album;
@@ -83,7 +84,7 @@ onUnmounted(() => {
 <template>
   <div class="album-info">
     <div :class="['stats-top', shuffleStatus === 'picked' && 'picked']">
-      <div>{{ new Date(album.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) }}</div>
+      <div>{{ new Date(album.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }).toLocaleLowerCase() }}</div>
 
       <div class="genre">
         <IconGenre />
@@ -100,7 +101,7 @@ onUnmounted(() => {
       ]"
       ref="albumCoverRef"
     >
-      <img :src="album?.spotifyAlbum?.images[1].url" />
+      <img :src="getAlbumImage(album, shuffleStatus !== 'picked' ? 'medium' : 'medium').url" />
 
       <div :class="['fantano-score', shuffleStatus === 'picked' && 'picked']">fantano {{ album.score }}</div>
     </div>

@@ -11,6 +11,14 @@ body {
   font-weight: bold;
 }
 
+button {
+  transition: all var(--transition-duration-fast) var(--easing);
+}
+
+button:not(:disabled):active {
+  scale: .95;
+}
+
 .button-big {
   padding: clamp(8px, 3vh, 24px) 48px;
   --border-width: 3px;

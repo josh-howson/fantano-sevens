@@ -6,6 +6,7 @@ import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, remov
 import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/HistoryView.vue';
+import { getAlbumImage } from '~/utilities/album';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -49,7 +50,10 @@ const fetchNextRandomAlbums = async () => {
   }
   isFetching.value = false;
 
-  nextRandomAlbums.value.forEach(album => album.spotifyAlbum?.images[0].url && preloadImage(album.spotifyAlbum?.images[1].url));
+  nextRandomAlbums.value.forEach(album => {
+    const albumCoverUrl = getAlbumImage(album, 'medium');
+    return albumCoverUrl && preloadImage(albumCoverUrl.url);
+  });
 };
 
 let shuffleInterval: NodeJS.Timeout;
@@ -81,6 +85,13 @@ const handleShuffle = () => {
   setTimeout(() => showFinalAlbum(), SHUFFLE_DURATION);
 };
 
+const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
+  const spotifyUrl = album.spotifyUrl;
+  window.open(spotifyUrl, '_blank');
+  if (historyAdd)
+    handleAddAlbumToHistory(album);
+};
+
 const handleAlbumFlip = () => {
   shuffleByOne();
 };
@@ -97,17 +108,17 @@ const handleCloseHistory = () => {
   showHistory.value = false;
 }
 
-const handleAddAlbumToHistory = (album: Album) => {
+const handleAddAlbumToHistory = (album: HistoryAlbum) => {
   addToHistory(album);
   syncAlbumHistoryRef();
 };
 
-const handleLogAlbum = (album: Album, value: boolean) => {
+const handleLogAlbum = (album: HistoryAlbum, value: boolean) => {
   updateLogStatus(album, value);
   syncAlbumHistoryRef();
 }
 
-const handleLikeAlbum = (album: Album, value: boolean) => {
+const handleLikeAlbum = (album: HistoryAlbum, value: boolean) => {
   updateLikeStatus(album, value);
   syncAlbumHistoryRef();
 }
@@ -123,7 +134,9 @@ watch(minRating, () => {
 });
 
 onMounted(fetchNextRandomAlbums);
+
 onMounted(syncAlbumHistoryRef);
+
 onMounted(() => {
   const minRatingFromCookie = getMinRatingFromCookie();
   if (minRatingFromCookie) minRating.value = minRatingFromCookie;
@@ -162,9 +175,8 @@ onMounted(() => {
         :album="currentAlbum"
         :shuffleStatus="shuffleStatus"
         @history-add="handleAddAlbumToHistory"
-        @log="handleLogAlbum"
-        @like="handleLikeAlbum"
         @shuffle="handleShuffle"
+        @stream="handleStream"
       />
 
       <MinimumScore v-model="minRating" :disabled="shuffleStatus === 'shuffling'" />
@@ -175,6 +187,9 @@ onMounted(() => {
     :album-history="albumHistory"
     @close="handleCloseHistory"
     @remove="handleRemoveFromHistory"
+    @log="handleLogAlbum"
+    @like="handleLikeAlbum"
+    @stream="handleStream"
     v-else
   />
 </template>
