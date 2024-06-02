@@ -125,7 +125,7 @@ onMounted(syncAlbumHistoryRef);
 
 <template>
   <div class="page-layout" v-if="!showHistory" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
-    <button class="show-history button-icon button-secondary" @click="handleShowHistory">
+    <button class="show-history button-icon button-secondary" @click="handleShowHistory" aria-label="History" title="my history">
       <IconHistory />
       
       <div v-if="albumHistory.length" class="history-count">{{ albumHistory.length < 10 ? albumHistory.length : '9+' }}</div>
