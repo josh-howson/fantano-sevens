@@ -7,12 +7,7 @@ export const getAlbumHistory = (): HistoryAlbum[] => {
 };
 
 const setAlbumHistory = (albums: HistoryAlbum[]): void => {
-  // Remove unnecessary fields from each album object before setting the cookie
-  const cleanedAlbums = albums.map(album => {
-    const { artist, title, liked, logged, albumCoverUrl } = album;
-    return { artist, title, liked, logged, albumCoverUrl };
-  });
-  setCookie('albumHistory', JSON.stringify(cleanedAlbums));
+  setCookie('albumHistory', JSON.stringify(albums));
 };
 
 export const addToHistory = (album: HistoryAlbum): void => {

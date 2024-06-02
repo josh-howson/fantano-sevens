@@ -2,6 +2,8 @@
 import type { HistoryAlbum } from '~/types/Album';
 import IconEdit from '~/components/icons/IconEdit.vue';
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
+import IconSpotify from '~/components/icons/IconSpotify.vue';
+import IconCross from '~/components/icons/IconCross.vue';
 import { isAlbumLiked, isAlbumLogged } from '~/utilities/history';
 
 type Props = {
@@ -49,7 +51,7 @@ const handleDoneEditing = () => isEdit.value = false;
     <div class="history">
       <button class="back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
       
-      <h1 class="title">
+      <h1 class="heading">
         <span>history</span>
         
           <button v-if="isEdit" class="edit icon-link-button" @click="handleDoneEditing"><IconEdit />done</button>
@@ -59,10 +61,10 @@ const handleDoneEditing = () => isEdit.value = false;
 
       <template v-if="albumHistory.length">
         <div class="list">
-          <div class="row" v-for="album in albumHistory">
+          <div class="history-album" v-for="album in albumHistory">
             <img class="cover" :src="album.albumCoverUrl" />
 
-            <div class="item">
+            <div class="album-text">
               <div class="title">{{ album.title }}</div>
 
               <div class="artist">{{ album.artist }}</div>
@@ -72,17 +74,21 @@ const handleDoneEditing = () => isEdit.value = false;
 
                 <button @click="handleLike(album)">{{ isAlbumLiked(albumHistory, album) ? 'liked' : 'like' }}</button>
 
-                <button @click="handleStream(album)">stream</button>
+                <button @click="handleStream(album)">
+                  <span>stream</span>
+
+                  <IconSpotify />
+                </button>
               </div>
             </div>
 
-            <button v-if="isEdit" @click="handleRemove(album)">X</button>
+            <button class="button-icon button-secondary" v-if="isEdit" @click="handleRemove(album)" title="remove from history" aria-label="remove from history"><IconCross /></button>
           </div>
         </div>
       </template>
 
       <div v-else>
-        <p>your history is still empty!</p>
+        <p>your history is empty!</p>
 
         <p>come back after you've streamed, saved or logged an album, and you'll be able to keep track of and modify your them here.</p>
       </div>
@@ -100,7 +106,7 @@ const handleDoneEditing = () => isEdit.value = false;
   padding: 16px 0 !important;
 }
 
-.title {
+.heading {
   display: flex;
   align-items: center;
   margin-top: var(--spacing-2);
@@ -137,31 +143,43 @@ const handleDoneEditing = () => isEdit.value = false;
 
 .actions {
   display: flex;
-  gap: var(--spacing-1\/2);
+  gap: var(--spacing-1);
+  margin-top: var(--spacing-1\/2);
+  flex-flow: row wrap;
 }
 
-.row {
+.actions svg {
+  height: 1em;
+  width: 1em;
+}
+
+.history-album {
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
-  gap: var(--spacing-1);
+  gap: var(--spacing-1\/2);
 }
 
-.item {
+.cover {
+  border: 2px solid var(--on-surface);
+  border-radius: 4px;
+  height: 64px;
+  width: 64px;
+}
+
+.album-text {
   flex: 1 1 0;
+  display: flex;
+  flex-flow: column nowrap;
 }
 
-.item .title {
+.album-text .title {
   font-size: 16px;
   font-weight: bold;
 }
 
-.item .artist {
+.album-text .artist {
   font-size: 12px;
-}
-
-.actions {
-  margin-top: var(--spacing-1\/2);
 }
 
 .actions button {

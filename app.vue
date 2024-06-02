@@ -88,8 +88,10 @@ const handleShuffle = () => {
 const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
   const spotifyUrl = album.spotifyUrl;
   window.open(spotifyUrl, '_blank');
-  if (historyAdd)
+  if (historyAdd) {
     handleAddAlbumToHistory(album);
+    syncAlbumHistoryRef();
+  }
 };
 
 const handleAlbumFlip = () => {
