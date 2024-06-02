@@ -127,6 +127,7 @@ onMounted(syncAlbumHistoryRef);
   <div class="page-layout" v-if="!showHistory" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
     <button class="show-history button-icon button-secondary" @click="handleShowHistory">
       <IconHistory />
+      
       <div v-if="albumHistory.length" class="history-count">{{ albumHistory.length < 10 ? albumHistory.length : '9+' }}</div>
     </button>
    
@@ -226,5 +227,11 @@ onMounted(syncAlbumHistoryRef);
   align-items: center;
   flex-direction: column;
   margin-top: auto;
+}
+
+@media (max-height: 700px) {
+  .bottom-controls {
+    gap: var(--spacing-1);
+  }
 }
 </style>

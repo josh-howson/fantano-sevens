@@ -121,11 +121,13 @@ onUnmounted(() => {
   perspective: 80vh;
   padding: 0 var(--spacing-1);
   width: 100%;
+  max-width: 400px;
 }
 
 .stats-top {
   display: flex;
   align-items: center;
+  flex-flow: row wrap;
   justify-content: space-between;
   width: 100%;
   font-size: 12px;
@@ -151,7 +153,6 @@ onUnmounted(() => {
 .album-cover {
   position: relative;
   width: 100%;
-  max-width: 400px;
   aspect-ratio: 1 / 1;
   transition: all var(--transition-duration) var(--easing);
 }
@@ -228,6 +229,12 @@ onUnmounted(() => {
 
   100% {
     transform: rotateX(-1800deg);
+  }
+}
+
+@media (max-height: 700px) {
+  .album-info {
+    max-width: 300px;
   }
 }
 </style>

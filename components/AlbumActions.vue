@@ -66,6 +66,7 @@ const handleShuffle = () => {
 .album-actions {
   display: flex;
   align-items: stretch;
+  flex-flow: row wrap;
   gap: var(--spacing-1\/2);
   transition: all var(--transition-duration) var(--easing);
   scale: var(--enter-scale);
