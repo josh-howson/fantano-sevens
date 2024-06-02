@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue';
 import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
 import { preloadImage } from '~/utilities/image';
-import { ref, computed, watch, onMounted } from 'vue';
 import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, removeFromHistory } from '~/utilities/history';
+import IconHistory from '~/components/icons/IconHistory.vue';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -17,16 +18,9 @@ const shuffleStatus: Ref<ShuffleStatus> = ref('init');
 const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
 
-const isDisabled = computed(() => isFetching.value || shuffleStatus.value === 'shuffling');
-const shuffleButtonText = computed(() => {
-  if (isDisabled.value) {
-    if (shuffleStatus.value === 'shuffling')
-      return 'Picking...';
-    else
-      return 'Please wait...';
-  } else
-    return 'Pick a random album';
-});
+const isShowBigButton = computed(() => shuffleStatus.value === 'init');
+const isBigButtonDisabled = computed(() => isFetching.value);
+const bigButtonText = computed(() => isFetching.value ? 'loading...' : 'pick a random album');
 
 let abortController: AbortController | null = null;
 
@@ -94,7 +88,11 @@ const syncAlbumHistoryRef = () => {
 };
 
 const handleShowHistory = () => {
-  showHistory.value = !showHistory.value;
+  showHistory.value = true;
+}
+
+const handleCloseHistory = () => {
+  showHistory.value = false;
 }
 
 const handleAddAlbumToHistory = (album: Album) => {
@@ -127,15 +125,18 @@ onMounted(syncAlbumHistoryRef);
 
 <template>
   <div class="page-layout" v-if="!showHistory" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
-
-    <MinimumScore v-model="minRating" />
-
+    <button class="show-history button-icon button-secondary" @click="handleShowHistory">
+      <IconHistory />
+      <div v-if="albumHistory.length" class="history-count">{{ albumHistory.length < 10 ? albumHistory.length : '9+' }}</div>
+    </button>
+   
     <button
-      class="randomize-button"
+      class="button-big button-primary"
       @click="handleShuffle"
-      :disabled="isDisabled"
+      :disabled="isBigButtonDisabled"
+      v-if="isShowBigButton"
     >
-      {{ shuffleButtonText }}
+      {{ bigButtonText }}
     </button>
 
     <AlbumInfo
@@ -144,44 +145,71 @@ onMounted(syncAlbumHistoryRef);
       :shuffleStatus="shuffleStatus"
       :albumHistory="albumHistory"
       @flip="handleAlbumFlip"
-      @history-add="handleAddAlbumToHistory"
-      @log="handleLogAlbum"
-      @like="handleLikeAlbum"
     />
 
-    <AlbumMetaData
-      v-if="currentAlbum && shuffleStatus === 'picked'"
-      :album="currentAlbum"
-    />
+    <div class="bottom-controls">
+      <AlbumActions
+        v-if="currentAlbum"
+        :albumHistory="albumHistory"
+        :album="currentAlbum"
+        :shuffleStatus="shuffleStatus"
+        @history-add="handleAddAlbumToHistory"
+        @log="handleLogAlbum"
+        @like="handleLikeAlbum"
+        @shuffle="handleShuffle"
+      />
 
-    <button class="show-history button-secondary" @click="handleShowHistory">{{showHistory ? 'Back' : `History${albumHistory.length ? ` (${albumHistory.length})`: ''}` }}</button>
+      <MinimumScore v-model="minRating" :disabled="shuffleStatus === 'shuffling'" />
+    </div>
   </div>
+
   <div class="history" v-else>
-  <table>
-    <thead>
-      <td>Album</td>
-      <td>Logged</td>
-      <td>Liked</td>
-      <td>Actions</td>
-    </thead>
-    <tr v-for="album in albumHistory">
-      <td>{{ album.title }} - {{ album.artist }}</td>
-      <td>{{ album.logged }}</td>
-      <td>{{ album.liked }}</td>
-      <td>
-        <button class="button-secondary" @click="handleRemoveFromHistory(album)">x</button>
-      </td>
-    </tr>
-  </table>
-  <button class="show-history button-secondary" @click="handleShowHistory">Back</button>
+    <table>
+      <thead>
+        <td>Album</td>
+        <td>Logged</td>
+        <td>Liked</td>
+        <td>Actions</td>
+      </thead>
+      <tr v-for="album in albumHistory">
+        <td>{{ album.title }} - {{ album.artist }}</td>
+        <td>{{ album.logged }}</td>
+        <td>{{ album.liked }}</td>
+        <td>
+          <button class="" @click="handleRemoveFromHistory(album)">x</button>
+        </td>
+      </tr>
+    </table>
+
+    <button class="show-history" @click="handleCloseHistory">Back</button>
   </div>
 </template>
 
 <style scoped>
 .show-history {
-  margin: var(--spacing-1);
-  margin-top: auto;
+  position: relative;
   margin-left: auto;
+  margin-bottom: auto;
+}
+
+.history-count {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--on-surface);
+  border: 2px solid var(--bg-surface-light);
+  color: var(--bg-surface-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: -6px;
+  margin-right: -6px;
 }
 
 .history {
@@ -192,21 +220,11 @@ onMounted(syncAlbumHistoryRef);
   height: 100dvh;
 }
 
-.randomize-button {
-  flex: 0 0 auto;
-  padding: 16px 32px;
-  background-color: var(--primary-color);
-  border: 2px solid var(--text-color);
-  border-radius: var(--border-radius);
-  font-weight: bold;
-  color: var(--text-color);
-  font-size: 16px;
-}
-
-.randomize-button:disabled {
-  background-color: #ddd;
-  color: #777;
-  cursor: not-allowed;
-  border-color: #777;
+.bottom-controls {
+  display: flex;
+  gap: var(--spacing-2);
+  align-items: center;
+  flex-direction: column;
+  margin-top: auto;
 }
 </style>

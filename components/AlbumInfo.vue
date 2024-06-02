@@ -1,25 +1,18 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
-import { getAlbumSpotifyUrl } from '~/utilities/album';
-import { isAlbumLiked, isAlbumLogged } from '~/utilities/history';
+import type { Album, ShuffleStatus } from '~/types/Album';
+import IconGenre from '~/components/icons/IconGenre.vue';
 
 const props = defineProps<{
   album: Album;
   shuffleStatus: ShuffleStatus;
-  albumHistory: HistoryAlbum[];
 }>();
 
 const emit = defineEmits<{
   (e: 'flip'): void;
-  (e: 'history-add', album: Album): void;
-  (e: 'log', album: Album, value: boolean): void;
-  (e: 'like', album: Album, value: boolean): void;
 }>();
 
 const albumCoverRef = ref<HTMLElement | null>(null);
-const isLogged = computed(() => isAlbumLogged(props.albumHistory, props.album))
-const isLiked = computed(() => isAlbumLiked(props.albumHistory, props.album))
 let animationFrameId: number;
 let accumulatedRotation = 0;
 let lastAngle = 0;
@@ -55,24 +48,6 @@ function getRotationAngle(matrix: string): number {
   return Math.round(Math.atan2(m21, m22) * (180 / Math.PI)) % 360;
 }
 
-const handleSpotifyClick = () => {
-  const spotifyUrl = getAlbumSpotifyUrl(props.album);
-  if (spotifyUrl) {
-    window.open(spotifyUrl, '_blank');
-    emit('history-add', props.album)
-  } else {
-    console.warn('Spotify URL is missing.');
-  }
-};
-
-const toggleAlbumLog = () => {
-  emit('log', props.album, !isLogged.value);
-};
-
-const toggleAlbumLike = () => {
-  emit('like', props.album, !isLiked.value);
-};
-
 watch(
   () => props.shuffleStatus,
   (newStatus) => {
@@ -107,6 +82,16 @@ onUnmounted(() => {
 
 <template>
   <div class="album-info">
+    <div :class="['stats-top', shuffleStatus === 'picked' && 'picked']">
+      <div>{{ album.date }}</div>
+
+      <div class="genre">
+        <IconGenre />
+
+        <span>{{ album.genre }}</span>
+      </div>
+    </div>
+
     <div
       :class="[
         'album-cover',
@@ -116,23 +101,20 @@ onUnmounted(() => {
       ref="albumCoverRef"
     >
       <img :src="album?.spotifyAlbum?.images[1].url" />
-    </div>
-    <div class="album-text">
-      <div class="title">{{ album.title }}</div>
-      <div class="artist">{{ album.artist }}</div>
+
+      <div :class="['fantano-score', shuffleStatus === 'picked' && 'picked']">fantano {{ album.score }}</div>
     </div>
 
-    <div class="album-actions" v-if="shuffleStatus === 'picked'">
-      <button class="button-secondary" @click="handleSpotifyClick">Stream on Spotify 🎧</button>
-      <button class="button-secondary" @click="toggleAlbumLog">{{ isLogged ? 'Logged ✏️' : 'Log' }}</button>
-      <button class="button-secondary" @click="toggleAlbumLike">{{ isLiked ? 'Liked 💖' : 'Like' }}</button>
+    <div class="album-text">
+      <div class="artist">{{ album.artist }}</div>
+
+      <div class="title">{{ album.title }}</div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .album-info {
-  flex: 1 1 0;
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
@@ -141,39 +123,90 @@ onUnmounted(() => {
   width: 100%;
 }
 
+.stats-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 12px;
+  padding: 8px;
+}
+
+.stats-top > * {
+  scale: 0;
+  transition: all var(--transition-duration) var(--easing);
+}
+
+.stats-top.picked > * {
+  scale: 1;
+}
+
+.stats-top .genre {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: lowercase;
+}
+
 .album-cover {
-  margin-top: 16px;
-  width: 200px;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
   aspect-ratio: 1 / 1;
-  transition: all .5s ease-out;
+  transition: all var(--transition-duration) var(--easing);
 }
 
 .album-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--border-radius);
-  border: 2px solid var(--text-color);
-  transition: transform 0.5s;
+  border-radius: 8px;
+  border: 2px solid var(--on-surface);
+  transition: transform var(--transition-duration);
   transform-style: preserve-3d;
 }
 
 .shuffle {
   animation: spinTopToBottom var(--shuffle-duration) ease-in-out;
+  scale: .8;
 }
 
-.picked {
-  width: 100%;
-  max-width: 400px;
+.fantano-score {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: inline-block;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  background: var(--bg-surface-light);
+  color: var(--on-surface);
+  border: 2px solid var(--on-surface);
+  scale: var(--enter-scale);
+  opacity: 0;
+  transition: all var(--transition-duration) var(--easing);
+}
+
+.fantano-score.picked {
+  scale: 1;
+  opacity: 1;
 }
 
 .album-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   text-align: center;
   padding: 16px;
+  text-transform: initial;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
 }
 

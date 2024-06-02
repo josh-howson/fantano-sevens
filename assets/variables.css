@@ -1,12 +1,13 @@
 :root {
-  --primary-color: #FFCC00;
-  --text-color: #000;
-  --bg-color: #FFEC8B;
-  --border-radius: 8px;
-  --font-size-large: 24px;
-  --font-size-medium: 20px;
-  --font-size-small: 16px;
-  --spacing-1: 20px;
-  --artwork-size: min(30vw, 25vh);
-  --artwork-large-size: min(40vw, 35vh);
+  --spacing-1\/2: 8px;
+  --spacing-1: 16px;
+  --spacing-2: 32px;
+  --bg-surface: #FFEC8B;
+  --bg-surface-light: #FFF3B8;
+  --bg-surface-primary: #FFD324;
+  --on-surface: #000;
+  --bg-color: var(--bg-surface);
+  --easing: ease;
+  --transition-duration: .5s;
+  --enter-scale: .6;
 }

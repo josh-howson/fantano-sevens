@@ -15,22 +15,36 @@ const handleDecrement = () => setScore(minimumScore.value - 1);
 
 <template>
   <div class="minimum-score">
-    <span>Fantano minimum: </span>
     <div class="number-range">
-      <button @click="handleDecrement" :disabled="minimumScore <= range[0]">-</button>
-      {{ minimumScore < range[1] ? `${minimumScore}+` : minimumScore }} <button @click="handleIncrement"
+      <button class="button-icon button-secondary" @click="handleDecrement" :disabled="minimumScore <= range[0]">-</button>
+      {{ minimumScore < range[1] ? `${minimumScore}+` : minimumScore }} <button class="button-icon button-secondary" @click="handleIncrement"
         :disabled="minimumScore >= range[1]">+</button>
     </div>
+    <span>fantano minimum</span>
   </div>
 </template>
 
 <style scoped>
+.minimum-score[disabled="true"] {
+  transform: scale(var(--enter-scale));
+  opacity: 0;
+  pointer-events: none;
+}
+
 .minimum-score {
   flex: 0 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: var(--spacing-1);
-  margin-top: var(--spacing-1);
+  font-size: 12px;
+  transition: all var(--transition-duration) var(--easing);
+  opacity: 1;
+}
+
+.minimum-score button {
+  font-size: 16px;
+  --size: 32px;
 }
 
 .number-range {
@@ -38,5 +52,7 @@ const handleDecrement = () => setScore(minimumScore.value - 1);
   align-items: center;
   justify-content: center;
   gap: var(--spacing-1);
+  font-size: 16px;
+  font-weight: bold;
 }
 </style>

@@ -2,7 +2,26 @@
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  gap: var(--spacing-1);
+  gap: var(--spacing-2);
   height: 100vh;
   height: 100dvh;
+  padding: var(--spacing-1);
+  overflow-x: hidden;
+}
+
+.page-layout > * {
+  opacity: 0;
+  scale: var(--enter-scale);
+  animation: grow-in var(--transition-duration) var(--easing) forwards;
+}
+
+@keyframes grow-in {
+  from {
+    opacity: 0;
+    scale: var(--enter-scale);
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
 }

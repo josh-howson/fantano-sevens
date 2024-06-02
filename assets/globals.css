@@ -3,12 +3,50 @@ body {
   background-color: var(--bg-color);
 }
 
-.button-secondary {
-  padding: 8px 16px;
-  border: 2px solid currentColor;
-  background: none;
-  border-radius: var(--border-radius);
+.button-big, .button-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
-  color: var(--text-color);
+}
+
+.button-big {
+  padding: 24px 48px;
+  --border-width: 3px;
+  border-radius: 12px;
+  font-size: 20px;
+  gap: 8px;
+}
+
+.button-big svg {
+  width: 24px;
+  height: 24px;
+}
+
+.button-primary:disabled, .button-secondary:disabled {
+  background-color: #ddd;
+  color: #777;
+  cursor: not-allowed;
+  border-color: #777;
+}
+
+.button-primary {
+  background: var(--bg-surface-primary);
+  color: var(--on-surface);
+  border: var(--border-width, 2px) solid var(--on-surface);
+}
+
+.button-secondary {
+  border: var(--border-width ,2px) solid var(--on-surface);
+  background: var(--bg-surface-light);
+  color: var(--on-surface);
+}
+
+.button-icon {
+  width: var(--size, 40px);
+  height: var(--size, 40px);
   font-size: 14px;
+  border-radius: 999px;
+  padding: 0;
 }
