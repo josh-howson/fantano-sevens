@@ -90,7 +90,7 @@ const handleDoneEditing = () => isEdit.value = false;
       <div v-else>
         <p>your history is empty!</p>
 
-        <p>come back after you've streamed, saved or logged an album, and you'll be able to keep track of and modify your them here.</p>
+        <p>come back after you've streamed, saved or logged an album, and you'll be able to keep track of and modify them here.</p>
       </div>
     </div>
   </div>
