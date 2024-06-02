@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
 import { preloadImage } from '~/utilities/image';
 import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, removeFromHistory } from '~/utilities/history';
+import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/HistoryView.vue';
 
@@ -118,10 +119,15 @@ const handleRemoveFromHistory = (album: HistoryAlbum) => {
 
 watch(minRating, () => {
   fetchNextRandomAlbums();
+  setMinRatingCookie(minRating.value);
 });
 
 onMounted(fetchNextRandomAlbums);
 onMounted(syncAlbumHistoryRef);
+onMounted(() => {
+  const minRatingFromCookie = getMinRatingFromCookie();
+  if (minRatingFromCookie) minRating.value = minRatingFromCookie;
+})
 </script>
 
 <template>
