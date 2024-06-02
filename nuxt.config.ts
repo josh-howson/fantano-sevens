@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     head: {
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, user-scalable=no' },
-        { name: 'name', content: 'fantano sevens' },
+        { name: 'title', content: 'fantano sevens' },
         { name: 'description', content: "randomly select an album to listen to based on Anthony Fantano's rating" },
       ],
       htmlAttrs: {
