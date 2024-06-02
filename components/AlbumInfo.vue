@@ -83,7 +83,8 @@ onUnmounted(() => {
 <template>
   <div class="album-info">
     <div :class="['stats-top', shuffleStatus === 'picked' && 'picked']">
-      <div>{{ album.date }}</div>
+      <!-- <div>{{ album.date.split(' ').filter(i => !i.includes(',')).join(' ') }}</div> -->
+      <div>{{ new Date(album.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) }}</div>
 
       <div class="genre">
         <IconGenre />
