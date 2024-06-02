@@ -17,7 +17,3 @@ button:focus-visible {
   outline: 4px solid #000;
   outline-offset: 2px;
 }
-
-button, a, input, select, textarea {
-  touch-action: manipulation;
-}
