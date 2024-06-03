@@ -31,10 +31,10 @@ const handleStream = () => {
       <IconRedo />
     </button>
 
-    <button class="button-big button-primary" @click="handleStream">
+    <button class="stream button-big button-primary" @click="handleStream">
       <IconSpotify />  
 
-      <span>stream</span>
+      <span class="text">stream</span>
     </button>
   </div>
 </template>
@@ -59,5 +59,11 @@ const handleStream = () => {
 
 .reshuffle {
   padding-inline: 24px;
+}
+
+@media (max-width: 374px) {
+  .stream .text {
+    display: none;
+  }
 }
 </style>
