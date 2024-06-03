@@ -7,6 +7,7 @@ import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preferen
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/HistoryView.vue';
 import { getAlbumImage } from '~/utilities/album';
+import { useGtm } from '@gtm-support/vue-gtm';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -81,13 +82,26 @@ const handleShuffle = () => {
   applyPreloadedAlbums();
   shuffleStatus.value = 'shuffling';
   shuffleByOne();
-
+  const gtm = useGtm();
+  if (gtm) {
+    gtm.trackEvent({
+      event: 'shuffle_action',
+    });
+  }
   setTimeout(() => showFinalAlbum(), SHUFFLE_DURATION);
 };
 
 const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
   const spotifyUrl = album.spotifyUrl;
   window.open(spotifyUrl, '_blank');
+
+  const gtm = useGtm();
+  if (gtm) {
+    gtm.trackEvent({
+      event: 'stream_action',
+      value: `${album.artist} - ${album.title}`,
+    });
+  }
   if (historyAdd) {
     handleAddAlbumToHistory(album);
     syncAlbumHistoryRef();

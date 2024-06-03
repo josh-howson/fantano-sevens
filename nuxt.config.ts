@@ -7,6 +7,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     spotifyClientId: process.env.SPOTIFY_CLIENT_ID,
     spotifyClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    public: {
+      gtagId: 'G-H135NRCKYL',
+    }
   },
   devtools: { enabled: true },
   css: [
