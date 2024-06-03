@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { HistoryAlbum } from '~/types/Album';
+import InstallCTA from '~/components/InstallCTA.vue';
 import IconEdit from '~/components/icons/IconEdit.vue';
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconSpotify from '~/components/icons/IconSpotify.vue';
@@ -57,6 +58,8 @@ const handleDoneEditing = () => isEdit.value = false;
           <button v-if="isEdit" class="edit icon-link-button" @click="handleDoneEditing"><IconEdit />done</button>
           
           <button v-else class="edit icon-link-button" @click="handleEdit" :disabled="!albumHistory.length"><IconEdit />edit</button>
+
+          <InstallCTA />
       </h1>
 
       <template v-if="albumHistory.length">

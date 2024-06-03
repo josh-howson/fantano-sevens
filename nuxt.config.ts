@@ -24,9 +24,12 @@ export default defineNuxtConfig({
         { name: 'description', content: "randomly select an album to listen to based on Anthony Fantano's rating" },
       ],
       title: 'fantano sevens',
+      link: [
+        { rel: 'manifest', href: '/manifest.json' },
+      ],
       htmlAttrs: {
         lang: 'en',
-      }
-    }
-  }
-})
+      },
+    },
+  },
+});
