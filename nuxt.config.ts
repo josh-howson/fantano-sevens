@@ -32,7 +32,4 @@ export default defineNuxtConfig({
       },
     },
   },
-  plugins: [
-    '~/plugins/google-analytics.client.ts'
-  ],
 });

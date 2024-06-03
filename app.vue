@@ -7,7 +7,6 @@ import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preferen
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/HistoryView.vue';
 import { getAlbumImage } from '~/utilities/album';
-import { trackEvent } from '~/utilities/analytics';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -82,7 +81,6 @@ const handleShuffle = () => {
   applyPreloadedAlbums();
   shuffleStatus.value = 'shuffling';
   shuffleByOne();
-  trackEvent('Albums', 'shuffle');
 
   setTimeout(() => showFinalAlbum(), SHUFFLE_DURATION);
 };
