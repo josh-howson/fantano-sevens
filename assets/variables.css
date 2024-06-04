@@ -8,7 +8,7 @@
   --on-surface: #000;
   --bg-color: var(--bg-surface);
   --easing: ease;
-  --transition-duration: .5s;
+  --transition-duration: .4s;
   --transition-duration-fast: .1s;
-  --enter-scale: .6;
+  --enter-scale: .7;
 }
