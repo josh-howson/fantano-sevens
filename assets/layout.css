@@ -4,8 +4,12 @@
   align-items: center;
   height: 100vh;
   height: 100dvh;
-  padding: var(--spacing-1);
+  padding-top: calc(var(--spacing-1) + env(safe-area-inset-top, var(--spacing-1)));
+  padding-right: calc(var(--spacing-1) + env(safe-area-inset-right, var(--spacing-1)));
+  padding-bottom: calc(var(--spacing-1) + env(safe-area-inset-bottom, var(--spacing-1)));
+  padding-left: calc(var(--spacing-1) + env(safe-area-inset-left, var(--spacing-1)));
   overflow-x: hidden;
+  --max-content-width: 480px;
 }
 
 .page-layout > * {

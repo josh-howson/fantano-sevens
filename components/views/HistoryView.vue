@@ -52,7 +52,7 @@ const handleDoneEditing = () => isEdit.value = false;
     <div class="history">
       <button class="back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
       
-      <h1 class="heading">
+      <h1 class="view-heading">
         <span>history</span>
         
           <button v-if="isEdit" class="edit icon-link-button" @click="handleDoneEditing"><IconEdit />done</button>
@@ -101,32 +101,12 @@ const handleDoneEditing = () => isEdit.value = false;
 
 <style scoped>
 .history {
-  max-width: 480px;
+  max-width: var(--max-content-width);
   width: 100%;
 }
 
 .back {
   padding: 16px 0 !important;
-}
-
-.heading {
-  display: flex;
-  align-items: center;
-  margin-top: var(--spacing-2);
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.icon-link-button {
-  background: none;
-  padding: 0;
-  color: var(--on-surface);
-  border: none;
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  font-size: 16px;
-  font-weight: normal;
 }
 
 .edit {
@@ -141,7 +121,6 @@ const handleDoneEditing = () => isEdit.value = false;
   display: flex;
   flex-flow: column nowrap;
   gap: var(--spacing-1);
-  margin-top: var(--spacing-2);
 }
 
 .actions {

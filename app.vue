@@ -5,14 +5,16 @@ import { preloadImage } from '~/utilities/image';
 import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, removeFromHistory } from '~/utilities/history';
 import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
 import IconHistory from '~/components/icons/IconHistory.vue';
-import HistoryView from '~/components/HistoryView.vue';
+import HistoryView from '~/components/views/HistoryView.vue';
+import SettingsView from '~/components/views/SettingsView.vue';
+import IconGear from '~/components/icons/IconGear.vue';
 import { getAlbumImage } from '~/utilities/album';
 import { useGtm } from '@gtm-support/vue-gtm';
 
 const SHUFFLE_DURATION = 4000;
 
 let latestRequestId = 0;
-const showHistory = ref(false);
+const view: Ref<'picker' | 'history' | 'settings'> = ref('picker');
 const minRating = ref(7);
 const nextRandomAlbums: Ref<Album[]> = ref([]);
 const randomAlbums: Ref<Album[]> = ref([]);
@@ -117,11 +119,19 @@ const syncAlbumHistoryRef = () => {
 };
 
 const handleShowHistory = () => {
-  showHistory.value = true;
+  view.value = 'history';
 }
 
 const handleCloseHistory = () => {
-  showHistory.value = false;
+  view.value = 'picker';
+}
+
+const handleShowSettings = () => {
+  view.value = 'settings';
+}
+
+const handleCloseSettings = () => {
+  view.value = 'picker';
 }
 
 const handleAddAlbumToHistory = (album: HistoryAlbum) => {
@@ -160,12 +170,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="page-layout" v-if="!showHistory" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
-    <button class="show-history button-icon button-secondary" @click="handleShowHistory" aria-label="History" title="my history">
-      <IconHistory />
-      
-      <div v-if="albumHistory.length" class="history-count">{{ albumHistory.length < 10 ? albumHistory.length : '9+' }}</div>
-    </button>
+  <div class="page-layout" v-if="view === 'picker'" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
+    <div class="top-controls">
+      <button class="settings button-icon button-secondary" @click="handleShowSettings" title="settings" aria-label="settings">
+        <IconGear />
+      </button>
+
+      <button class="show-history button-icon button-secondary" @click="handleShowHistory" aria-label="History" title="my history">
+        <IconHistory />
+        
+        <div v-if="albumHistory.length" class="history-count">{{ albumHistory.length < 10 ? albumHistory.length : '9+' }}</div>
+      </button>
+    </div>
    
     <button
       class="button-big button-primary"
@@ -194,8 +210,6 @@ onMounted(() => {
         @shuffle="handleShuffle"
         @stream="handleStream"
       />
-
-      <MinimumScore v-model="minRating" :disabled="shuffleStatus === 'shuffling'" />
     </div>
   </div>
 
@@ -206,15 +220,29 @@ onMounted(() => {
     @log="handleLogAlbum"
     @like="handleLikeAlbum"
     @stream="handleStream"
-    v-else
+    v-else-if="view === 'history'"
   />
+
+  <SettingsView
+    @close="handleCloseSettings"
+    v-model="minRating"
+    v-else-if="view === 'settings'"
+  />
+
+  <div v-else>an error occured :(</div>
 </template>
 
 <style scoped>
-.show-history {
-  position: relative;
+.top-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
   margin-left: auto;
   margin-bottom: auto;
+}
+
+.show-history {
+  position: relative;
 }
 
 .history-count {

@@ -3,6 +3,15 @@ body {
   background-color: var(--bg-color);
 }
 
+.view-heading {
+  display: flex;
+  align-items: center;
+  margin-top: var(--spacing-2);
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: var(--spacing-2);
+}
+
 .button-big, .button-icon {
   flex: 0 0 auto;
   display: flex;
@@ -57,4 +66,16 @@ button:not(:disabled):active {
   font-size: 14px;
   border-radius: 999px;
   padding: 0;
+}
+
+.icon-link-button {
+  background: none;
+  padding: 0;
+  color: var(--on-surface);
+  border: none;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 16px;
+  font-weight: normal;
 }
