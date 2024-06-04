@@ -10,6 +10,7 @@ import { isAlbumLiked, isAlbumLogged } from '~/utilities/history';
 type Props = {
   albumHistory: HistoryAlbum[]
 }
+
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
@@ -103,6 +104,7 @@ const handleDoneEditing = () => isEdit.value = false;
 .history {
   max-width: var(--max-content-width);
   width: 100%;
+  --big-factor: 1;
 }
 
 .edit {
@@ -127,22 +129,22 @@ const handleDoneEditing = () => isEdit.value = false;
 }
 
 .actions svg {
-  height: 1em;
-  width: 1em;
+  height: calc(1em * var(--big-factor));
+  width: calc(1em * var(--big-factor));
 }
 
 .history-album {
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
-  gap: var(--spacing-1\/2);
+  gap: calc(var(--spacing-1\/2) * var(--big-factor));
 }
 
 .cover {
   border: 2px solid var(--on-surface);
-  border-radius: 4px;
-  height: 64px;
-  width: 64px;
+  border-radius: calc(4px * var(--big-factor));
+  height: calc(64px * var(--big-factor));
+  width: calc(64px * var(--big-factor));
 }
 
 .album-text {
@@ -152,12 +154,12 @@ const handleDoneEditing = () => isEdit.value = false;
 }
 
 .album-text .title {
-  font-size: 16px;
+  font-size: calc(16px * var(--big-factor));
   font-weight: bold;
 }
 
 .album-text .artist {
-  font-size: 12px;
+  font-size: calc(12px * var(--big-factor));
 }
 
 .actions button {
@@ -166,10 +168,10 @@ const handleDoneEditing = () => isEdit.value = false;
   color: var(--on-surface);
   border: none;
   display: inline-flex;
-  gap: 4px;
+  gap: calc(4px * var(--big-factor));
   align-items: center;
   font-weight: bold;
-  font-size: 12px;
+  font-size: calc(12px * var(--big-factor));
 }
 
 .actions button:hover {
@@ -177,6 +179,9 @@ const handleDoneEditing = () => isEdit.value = false;
 }
 
 @media (min-width: 480px) {
+  .history {
+    --big-factor: 1.2;
+  }
   .edit {
     margin-left: auto;
   }
