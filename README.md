@@ -1,6 +1,6 @@
-# Fantano Sevens
+# fantano sevens
 
-This app will generate you a random album that Anthony Fantano has reviewed at least a 7.
+this app will generate you a random album that Anthony Fantano has reviewed at least a 7.
 
 [Try it here](https://fantano-sevens.vercel.app/)
 
