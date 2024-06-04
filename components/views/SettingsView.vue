@@ -15,7 +15,7 @@ const handleBack = () => {
 <template>
   <div class="page-layout">
     <div class="settings">
-      <button class="back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
+      <button class="view-back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
 
       <h1 class="view-heading">
         <span>preferences</span>

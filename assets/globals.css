@@ -3,6 +3,11 @@ body {
   background-color: var(--bg-color);
 }
 
+
+.view-back {
+  padding: 16px 0 !important;
+}
+
 .view-heading {
   display: flex;
   align-items: center;

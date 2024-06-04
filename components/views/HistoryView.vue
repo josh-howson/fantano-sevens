@@ -50,7 +50,7 @@ const handleDoneEditing = () => isEdit.value = false;
 <template>
   <div class="page-layout">
     <div class="history">
-      <button class="back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
+      <button class="view-back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
       
       <h1 class="view-heading">
         <span>history</span>
@@ -103,10 +103,6 @@ const handleDoneEditing = () => isEdit.value = false;
 .history {
   max-width: var(--max-content-width);
   width: 100%;
-}
-
-.back {
-  padding: 16px 0 !important;
 }
 
 .edit {
