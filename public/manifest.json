@@ -4,6 +4,7 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFEC8B",
+  "theme_color": "#FFEC8B",
   "description": "randomly select an album to listen to based on Anthony Fantano's rating",
   "icons": [
     {
