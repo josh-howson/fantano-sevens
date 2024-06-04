@@ -163,7 +163,7 @@ onUnmounted(() => {
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
-  border: 2px solid var(--on-surface);
+  border: 3px solid var(--on-surface);
   transition: transform var(--transition-duration);
   transform-style: preserve-3d;
 }
