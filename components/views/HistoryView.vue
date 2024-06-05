@@ -117,7 +117,7 @@ const handleDoneEditing = () => isEdit.value = false;
 
 .list {
   display: flex;
-  flex-flow: column nowrap;
+  flex-flow: column-reverse nowrap;
   gap: var(--spacing-1);
 }
 
