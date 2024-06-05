@@ -95,7 +95,7 @@ const handleShuffle = () => {
 
 const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
   const spotifyUrl = album.spotifyUrl;
-  window.open(spotifyUrl, '_blank');
+  window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
 
   const gtm = useGtm();
   if (gtm) {
