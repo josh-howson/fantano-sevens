@@ -51,7 +51,7 @@ export const updateLogStatus = (album: HistoryAlbum, logStatus: boolean): void =
   const albumHistory = getAlbumHistory();
   const index = albumHistory.findIndex(a => a.artist === album.artist && a.title === album.title);
   if (index !== -1) {
-    albumHistory[index] = { ...albumHistory[index], logged: logStatus };
+    albumHistory[index] = { ...albumHistory[index], logged: logStatus, logDate: logStatus ? new Date().toISOString() : undefined };
   } else if (logStatus) {
     albumHistory.push(album);
   }
@@ -77,10 +77,6 @@ export const removeFromHistory = (album: HistoryAlbum): void => {
     albumHistory.splice(index, 1);
     setAlbumHistory(albumHistory);
   }
-};
-
-export const getFullHistory = (): HistoryAlbum[] => {
-  return getAlbumHistory();
 };
 
 export const isAlbumLogged = (history: HistoryAlbum[], album: HistoryAlbum): boolean => {

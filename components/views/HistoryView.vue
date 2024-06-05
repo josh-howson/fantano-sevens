@@ -71,7 +71,7 @@ const handleDoneEditing = () => isEdit.value = false;
               <div class="artist">{{ album.artist }}</div>
 
               <div class="actions">
-                <button @click="toggleLog(album)">{{ isAlbumLogged(albumHistory, album) ? 'logged' : 'log' }}</button>
+                <button @click="toggleLog(album)">{{ isAlbumLogged(albumHistory, album) ? `logged` : 'log' }}</button>
 
                 <button @click="handleLike(album)">{{ isAlbumLiked(albumHistory, album) ? 'liked' : 'like' }}</button>
 
@@ -81,6 +81,8 @@ const handleDoneEditing = () => isEdit.value = false;
                   <IconSpotify />
                 </button>
               </div>
+
+              <div class="log-date" v-if="album.logDate">logged {{ new Date(album.logDate).toLocaleDateString('en-US').toLocaleLowerCase() }}</div>
             </div>
 
             <button class="button-icon button-secondary" v-if="isEdit" @click="handleRemove(album)" title="remove from history" aria-label="remove from history"><IconCross /></button>
@@ -155,8 +157,13 @@ const handleDoneEditing = () => isEdit.value = false;
   font-weight: bold;
 }
 
-.album-text .artist {
+.album-text .artist,
+.album-text .log-date {
   font-size: calc(12px * var(--big-factor));
+}
+
+.album-text .log-date {
+  margin-top: var(--spacing-1\/4);
 }
 
 .actions button {
