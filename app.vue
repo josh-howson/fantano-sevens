@@ -245,6 +245,7 @@ onMounted(() => {
 .top-controls {
   display: flex;
   align-items: center;
+  justify-content: end;
   gap: var(--spacing-1);
   margin-left: auto;
   margin-bottom: auto;
