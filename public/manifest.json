@@ -2,20 +2,52 @@
   "name": "fantano sevens",
   "short_name": "fantano sevens",
   "start_url": "/",
+  "display_override": ["fullscreen", "minimal-ui"],
   "display": "standalone",
   "background_color": "#FFEC8B",
   "theme_color": "#FFEC8B",
   "description": "randomly select an album to listen to based on Anthony Fantano's rating",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "favicon-192x192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "favicon-512x512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots" : [
+    {
+      "src": "screenshot-narrow-1.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "fantano sevens random album picker"
+    },
+    {
+      "src": "screenshot-wide-1.png",
+      "sizes": "1669x945",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "fantano sevens random album picker"
+    },
+    {
+      "src": "screenshot-wide-2.png",
+      "sizes": "1669x945",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "fantano sevens random album picker"
     }
   ]
 }

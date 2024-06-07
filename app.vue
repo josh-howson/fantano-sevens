@@ -7,6 +7,7 @@ import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preferen
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/views/HistoryView.vue';
 import SettingsView from '~/components/views/SettingsView.vue';
+import IconInstall from '@/components/icons/IconInstall.vue';
 import IconGear from '~/components/icons/IconGear.vue';
 import { getAlbumImage } from '~/utilities/album';
 import { useGtm } from '@gtm-support/vue-gtm';
@@ -124,15 +125,19 @@ const handleShowHistory = () => {
 
 const handleCloseHistory = () => {
   view.value = 'picker';
-}
+};
 
 const handleShowSettings = () => {
   view.value = 'settings';
-}
+};
+
+const handleInstall = () => {
+
+};
 
 const handleCloseSettings = () => {
   view.value = 'picker';
-}
+};
 
 const handleAddAlbumToHistory = (album: HistoryAlbum) => {
   addToHistory(album);
@@ -172,6 +177,10 @@ onMounted(() => {
 <template>
   <div class="page-layout" v-if="view === 'picker'" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
     <div class="top-controls">
+      <!-- <button class="install button-icon button-secondary" @click="handleInstall" title="install app" aria-label="install app">
+        <IconInstall />
+      </button> -->
+
       <button class="settings button-icon button-secondary" @click="handleShowSettings" title="settings" aria-label="settings">
         <IconGear />
       </button>
@@ -239,6 +248,11 @@ onMounted(() => {
   gap: var(--spacing-1);
   margin-left: auto;
   margin-bottom: auto;
+  width: 100%;
+}
+
+.top-controls .install {
+  margin-inline-end: auto;
 }
 
 .show-history {
