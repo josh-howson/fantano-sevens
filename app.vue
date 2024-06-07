@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
+import { useGtm } from '@gtm-support/vue-gtm';
 import { preloadImage } from '~/utilities/image';
 import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, removeFromHistory } from '~/utilities/history';
 import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
+import { getAlbumImage } from '~/utilities/album';
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/views/HistoryView.vue';
 import SettingsView from '~/components/views/SettingsView.vue';
-import IconInstall from '@/components/icons/IconInstall.vue';
+import IconInstall from '~/components/icons/IconInstall.vue';
 import IconGear from '~/components/icons/IconGear.vue';
-import { getAlbumImage } from '~/utilities/album';
-import { useGtm } from '@gtm-support/vue-gtm';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -24,6 +24,8 @@ const isFetching = ref(true);
 const shuffleStatus: Ref<ShuffleStatus> = ref('init');
 const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
+const deferredPrompt = ref();
+const isInstallShown = ref(false);
 
 const isShowBigButton = computed(() => shuffleStatus.value === 'init');
 const isBigButtonDisabled = computed(() => isFetching.value);
@@ -131,8 +133,10 @@ const handleShowSettings = () => {
   view.value = 'settings';
 };
 
-const handleInstall = () => {
-
+const handleInstall = async () => {
+  deferredPrompt.value.prompt();
+  const { outcome } = await deferredPrompt.value.userChoice;
+  isInstallShown.value = !outcome;
 };
 
 const handleCloseSettings = () => {
@@ -168,18 +172,26 @@ onMounted(fetchNextRandomAlbums);
 
 onMounted(syncAlbumHistoryRef);
 
-onMounted(() => {
+onBeforeMount(() => {
   const minRatingFromCookie = getMinRatingFromCookie();
   if (minRatingFromCookie) minRating.value = minRatingFromCookie;
-})
+});
+
+onBeforeMount(() => {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt.value = e;
+    isInstallShown.value = true;
+  });
+});
 </script>
 
 <template>
   <div class="page-layout" v-if="view === 'picker'" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
     <div class="top-controls">
-      <!-- <button class="install button-icon button-secondary" @click="handleInstall" title="install app" aria-label="install app">
+      <button v-if="isInstallShown" class="install button-icon button-secondary" @click="handleInstall" title="install app" aria-label="install app">
         <IconInstall />
-      </button> -->
+      </button>
 
       <button class="settings button-icon button-secondary" @click="handleShowSettings" title="settings" aria-label="settings">
         <IconGear />

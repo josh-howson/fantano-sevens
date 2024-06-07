@@ -1,4 +1,4 @@
-import { getCookie, setCookie } from './cookie';
+import { getCookie, setCookie } from '~/utilities/cookie';
 
 export const getMinRatingFromCookie = (): number | null => {
   const cookieValue = getCookie('minRating');
