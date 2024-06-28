@@ -36,6 +36,20 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'en',
       },
+      script: [
+        {
+          src: 'https://www.googletagmanager.com/gtag/js?id=G-H135NRCKYL',
+          async: true,
+        },
+        {
+          children: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-H135NRCKYL');
+          `
+        }
+      ],
     },
   },
 });

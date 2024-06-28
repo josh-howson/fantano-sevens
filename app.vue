@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
-import { useGtm } from '@gtm-support/vue-gtm';
 import { preloadImage } from '~/utilities/image';
 import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, removeFromHistory } from '~/utilities/history';
 import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
@@ -87,12 +86,6 @@ const handleShuffle = () => {
   applyPreloadedAlbums();
   shuffleStatus.value = 'shuffling';
   shuffleByOne();
-  const gtm = useGtm();
-  if (gtm) {
-    gtm.trackEvent({
-      event: 'shuffle_action',
-    });
-  }
   setTimeout(() => showFinalAlbum(), SHUFFLE_DURATION);
 };
 
@@ -100,13 +93,6 @@ const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
   const spotifyUrl = album.spotifyUrl;
   window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
 
-  const gtm = useGtm();
-  if (gtm) {
-    gtm.trackEvent({
-      event: 'stream_action',
-      value: `${album.artist} - ${album.title}`,
-    });
-  }
   if (historyAdd) {
     handleAddAlbumToHistory(album);
     syncAlbumHistoryRef();
