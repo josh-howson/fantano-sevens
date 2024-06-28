@@ -4,12 +4,13 @@ import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
 import { preloadImage } from '~/utilities/image';
 import { addToHistory, getAlbumHistory, updateLikeStatus, updateLogStatus, removeFromHistory } from '~/utilities/history';
 import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
-import { getAlbumImage } from '~/utilities/album';
+import { formatAlbumTitleAndArtist, getAlbumImage } from '~/utilities/album';
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/views/HistoryView.vue';
 import SettingsView from '~/components/views/SettingsView.vue';
 import IconInstall from '~/components/icons/IconInstall.vue';
 import IconGear from '~/components/icons/IconGear.vue';
+import { trackEvent } from '~/utilities/tracking';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -25,6 +26,7 @@ const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
 const deferredPrompt = ref();
 const isInstallShown = ref(false);
+const sessionShuffleCount = ref(0);
 
 const isShowBigButton = computed(() => shuffleStatus.value === 'init');
 const isBigButtonDisabled = computed(() => isFetching.value);
@@ -86,7 +88,17 @@ const handleShuffle = () => {
   applyPreloadedAlbums();
   shuffleStatus.value = 'shuffling';
   shuffleByOne();
-  setTimeout(() => showFinalAlbum(), SHUFFLE_DURATION);
+  setTimeout(() => {
+    showFinalAlbum();
+    sessionShuffleCount.value++;
+    trackEvent('shuffle', {
+      album: currentAlbum.value
+        ? formatAlbumTitleAndArtist(currentAlbum.value)
+        : null,
+      minScore: minRating.value,
+      sessionShuffleCount: sessionShuffleCount.value,
+    });
+  }, SHUFFLE_DURATION);
 };
 
 const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
@@ -97,6 +109,11 @@ const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
     handleAddAlbumToHistory(album);
     syncAlbumHistoryRef();
   }
+  trackEvent('stream', {
+    album: currentAlbum.value
+      ? formatAlbumTitleAndArtist(currentAlbum.value)
+      : null,
+  });
 };
 
 const handleAlbumFlip = () => {
@@ -123,6 +140,7 @@ const handleInstall = async () => {
   deferredPrompt.value.prompt();
   const { outcome } = await deferredPrompt.value.userChoice;
   isInstallShown.value = !outcome;
+  trackEvent('install');
 };
 
 const handleCloseSettings = () => {
@@ -132,21 +150,43 @@ const handleCloseSettings = () => {
 const handleAddAlbumToHistory = (album: HistoryAlbum) => {
   addToHistory(album);
   syncAlbumHistoryRef();
+  trackEvent('history-add', {
+    album: currentAlbum.value
+      ? formatAlbumTitleAndArtist(currentAlbum.value)
+      : null,
+  });
 };
 
 const handleLogAlbum = (album: HistoryAlbum, value: boolean) => {
   updateLogStatus(album, value);
   syncAlbumHistoryRef();
+  trackEvent('log', {
+    album: currentAlbum.value
+      ? formatAlbumTitleAndArtist(currentAlbum.value)
+      : null,
+    logged: value,
+  });
 }
 
 const handleLikeAlbum = (album: HistoryAlbum, value: boolean) => {
   updateLikeStatus(album, value);
   syncAlbumHistoryRef();
+  trackEvent('like', {
+    album: currentAlbum.value
+      ? formatAlbumTitleAndArtist(currentAlbum.value)
+      : null,
+    liked: value,
+  });
 }
 
 const handleRemoveFromHistory = (album: HistoryAlbum) => {
   removeFromHistory(album);
   syncAlbumHistoryRef();
+  trackEvent('history-remove', {
+    album: currentAlbum.value
+      ? formatAlbumTitleAndArtist(currentAlbum.value)
+      : null,
+  });
 }
 
 watch(minRating, () => {
