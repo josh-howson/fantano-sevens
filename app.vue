@@ -52,15 +52,18 @@ const fetchNextRandomAlbums = async () => {
     if (requestId === latestRequestId) {
       nextRandomAlbums.value = albums;
     }
+
+    const preloadPromises = nextRandomAlbums.value.map((album) => {
+      const albumCoverUrl = getAlbumImage(album, 'medium');
+      return albumCoverUrl ? preloadImage(albumCoverUrl.url) : Promise.resolve();
+    });
+
+    await Promise.all(preloadPromises);
   } catch (error) {
     console.error(error);
+  } finally {
+    isFetching.value = false;
   }
-  isFetching.value = false;
-
-  nextRandomAlbums.value.forEach(album => {
-    const albumCoverUrl = getAlbumImage(album, 'medium');
-    return albumCoverUrl && preloadImage(albumCoverUrl.url);
-  });
 };
 
 let shuffleInterval: NodeJS.Timeout;
@@ -189,9 +192,12 @@ const handleRemoveFromHistory = (album: HistoryAlbum) => {
   });
 }
 
-watch(minRating, () => {
-  fetchNextRandomAlbums();
+watch([minRating, view], () => {
   setMinRatingCookie(minRating.value);
+  // delay fetching until back on picker view
+  if (view.value === 'picker') {
+    fetchNextRandomAlbums();
+  }
 });
 
 onMounted(fetchNextRandomAlbums);
@@ -214,7 +220,10 @@ onBeforeMount(() => {
 
 <template>
   <div class="page-layout" v-if="view === 'picker'" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
-    <div class="top-controls">
+    <div :class="[
+      'top-controls',
+      shuffleStatus === 'shuffling' && 'shuffling',
+      ]">
       <button v-if="isInstallShown" class="install button-icon button-secondary" @click="handleInstall" title="install app" aria-label="install app">
         <IconInstall />
       </button>
@@ -239,13 +248,15 @@ onBeforeMount(() => {
       {{ bigButtonText }}
     </button>
 
-    <AlbumInfo
-      v-if="currentAlbum"
-      :album="currentAlbum"
-      :shuffleStatus="shuffleStatus"
-      :albumHistory="albumHistory"
-      @flip="handleAlbumFlip"
-    />
+    <KeepAlive>
+      <AlbumInfo
+        v-if="currentAlbum"
+        :album="currentAlbum"
+        :shuffleStatus="shuffleStatus"
+        :albumHistory="albumHistory"
+        @flip="handleAlbumFlip"
+      />
+    </KeepAlive>
 
     <div class="bottom-controls">
       <AlbumActions
@@ -288,6 +299,13 @@ onBeforeMount(() => {
   margin-left: auto;
   margin-bottom: auto;
   width: 100%;
+  min-height: 40px;
+
+  &.shuffling > button {
+    opacity: 0;
+    scale: 0;
+    transition: all var(--transition-duration) var(--easing);
+  }
 }
 
 .top-controls .install {

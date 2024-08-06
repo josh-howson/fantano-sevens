@@ -3,6 +3,8 @@ import { ref, watch, onMounted, onUnmounted } from 'vue';
 import IconGenre from '~/components/icons/IconGenre.vue';
 import type { Album, ShuffleStatus } from '~/types/Album';
 import { getAlbumImage } from '~/utilities/album';
+import IconChevronLeft from './icons/IconChevronLeft.vue';
+import IconSparkle from './icons/IconSparkle.vue';
 
 const props = defineProps<{
   album: Album;
@@ -14,6 +16,9 @@ const emit = defineEmits<{
 }>();
 
 const albumCoverRef = ref<HTMLElement | null>(null);
+const overview: Ref<string> = ref('');
+const overviewStatus: Ref<'not-fetched' | 'fetching' | 'fetched'> = ref('not-fetched');
+const isOverviewOpen: Ref<boolean> = ref(false);
 let animationFrameId: number;
 let accumulatedRotation = 0;
 let lastAngle = 0;
@@ -49,6 +54,38 @@ function getRotationAngle(matrix: string): number {
   return Math.round(Math.atan2(m21, m22) * (180 / Math.PI)) % 360;
 }
 
+const getOverview = async () => {
+  overviewStatus.value = 'fetching';
+  try {
+    const response = await fetch(`/api/albumOverview`, {
+      method: 'POST',
+      body: JSON.stringify(props.album),
+    });
+    overview.value = await response.json();
+    overviewStatus.value = 'fetched'
+  } catch (error) {
+    console.error(error);
+    overviewStatus.value = 'not-fetched';
+  }
+}
+
+const openOverview = () => {
+  if (overviewStatus.value === 'not-fetched') getOverview();
+  if (props.shuffleStatus === 'picked') {
+    isOverviewOpen.value = true;
+  }
+}
+
+const closeOverview = () => {
+  isOverviewOpen.value = false;
+}
+
+const resetOverview = () => {
+  overview.value = '';
+  overviewStatus.value = 'not-fetched';
+  isOverviewOpen.value = false;
+}
+
 watch(
   () => props.shuffleStatus,
   (newStatus) => {
@@ -58,6 +95,8 @@ watch(
         accumulatedRotation = 0;
         detectRotation();
       }
+      // clear overview
+      resetOverview();
     } else {
       cancelAnimationFrame(animationFrameId);
     }
@@ -98,12 +137,28 @@ onUnmounted(() => {
         'album-cover',
         shuffleStatus === 'shuffling' && 'shuffle',
         shuffleStatus === 'picked' && 'picked',
+        isOverviewOpen && 'overview-open',
+        overviewStatus === 'fetching' && 'overview-fetching',
+        overviewStatus === 'fetched' && 'overview-fetched',
       ]"
       ref="albumCoverRef"
+      @click="shuffleStatus === 'picked' && openOverview()"
     >
       <img :src="getAlbumImage(album, shuffleStatus !== 'picked' ? 'medium' : 'medium').url" />
 
       <div :class="['fantano-score', shuffleStatus === 'picked' && 'picked']">fantano {{ album.score }}</div>
+
+      <div class="overview" v-if="overview && isOverviewOpen">
+        <div class="overview-heading">
+          <button class="close-overview view-back icon-link-button enter-scale" @click.stop="closeOverview"><IconChevronLeft />back</button>
+
+          <img :src="getAlbumImage(album, shuffleStatus !== 'picked' ? 'medium' : 'medium').url" />
+        </div>
+
+        <div class="overview-body">{{ overview }}</div>
+
+        <p class="ai-disclaimer"><IconSparkle /> note: ai can sometimes make mistakes.</p>
+      </div>
     </div>
 
     <div class="album-text">
@@ -156,6 +211,48 @@ onUnmounted(() => {
   width: 100%;
   aspect-ratio: 1 / 1;
   transition: all var(--transition-duration) var(--easing);
+  &.overview-fetched.overview-open {
+    aspect-ratio: 3 / 4;
+    & > img {
+      animation: flip-in-alt .5s ease forwards;
+      backface-visibility: hidden;
+    }
+    & > .fantano-score {
+      display: none;
+    }
+  }
+  &.picked:not(:where(.overview-open, .overview-fetching)) {
+    cursor: pointer;
+    &:hover {
+      scale: .95;
+    }
+  }
+  &.overview-open {
+    /* scale: .95; */
+  }
+  &.overview-fetching {
+    cursor: wait;
+    animation: pulse 1s 1s ease infinite;
+    &::after {
+      --size: 14px;
+      content: '';
+      display: block;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 999px;
+      border: calc(var(--size) * .25) solid var(--on-surface);
+      border-top-color: transparent;
+      border-right-color: transparent;
+      bottom: 0;
+      left: 0;
+      margin: 12px;
+      position: absolute;
+      animation: spin 500ms linear infinite;
+      background: var(--bg-surface-light);
+      outline: calc(var(--size) * .5) solid var(--bg-surface-light);
+      outline-offset: -1px;
+    }
+  }
 }
 
 .album-cover img {
@@ -216,20 +313,110 @@ onUnmounted(() => {
   font-size: 16px;
 }
 
-.album-actions {
+.overview {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  background-color: var(--bg-surface-light);
+  border: 3px solid var(--on-surface);
+  border-radius: 8px;
+  white-space: preserve-breaks;
+  line-height: 1.5;
+  animation: flip-in .5s ease forwards;
+  backface-visibility: hidden;
+
+  & > * {
+    padding: var(--spacing-1);
+  }
+}
+
+@keyframes flip-in {
+  0% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes flip-in-alt {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(-180deg);
+  }
+}
+
+.overview-heading {
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: var(--spacing-1);
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface-light);
+  border-bottom: 3px solid var(--on-surface);
+}
+
+.overview-heading img {
+  border-radius: 8px;
+  height: 50px;
+  width: 50px;
+  border: 2px solid var(--on-surface);
+  display: block;
+}
+
+.overview-heading h2 {
+  font-weight: bold;
+}
+
+.close-overview {
+  margin-inline-end: auto;
+}
+
+.ai-disclaimer {
+  font-size: 14px;
+  background-color: var(--bg-surface);
+  margin: var(--spacing-2) var(--spacing-1);
+  border: 2px solid var(--on-surface);
+  border-radius: 4px;
+  & svg {
+    vertical-align: middle;
+    height: 1.25em;
+    width: 1.25em;
+    margin-inline-end: .5em;
+  }
 }
 
 @keyframes spinTopToBottom {
   0% {
     transform: rotateX(0deg);
   }
-
   100% {
     transform: rotateX(-1800deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 

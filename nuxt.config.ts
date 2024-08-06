@@ -11,7 +11,9 @@ export default defineNuxtConfig({
       gtagId: 'G-H135NRCKYL',
     }
   },
+
   devtools: { enabled: true },
+
   css: [
     '@/assets/fonts.css',
     '@/assets/globals.css',
@@ -20,6 +22,7 @@ export default defineNuxtConfig({
     '@/assets/typography.css',
     '@/assets/variables.css',
   ],
+
   app: {
     head: {
       meta: [
@@ -52,4 +55,6 @@ export default defineNuxtConfig({
       ],
     },
   },
+
+  compatibilityDate: '2024-08-05',
 });

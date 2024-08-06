@@ -60,7 +60,7 @@ button:not(:disabled):active {
 }
 
 .button-secondary {
-  border: var(--border-width ,2px) solid var(--on-surface);
+  border: var(--border-width, 2px) solid var(--on-surface);
   background: var(--bg-surface-light);
   color: var(--on-surface);
 }

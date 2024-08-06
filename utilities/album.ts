@@ -1,4 +1,5 @@
 import type { Album, FantanoAlbum, HistoryAlbum, SpotifySearchResponseRaw } from "~/types/Album";
+import type { OpenAICompletionRequestBody, OpenAICompletionResponse } from "~/types/OpenAI";
 
 const getSpotifyAccessToken = async (clientId: string, clientSecret: string): Promise<string> => {
   const response = await fetch('https://accounts.spotify.com/api/token', {
@@ -54,6 +55,37 @@ export const getRandomAlbums = async (allAlbums: FantanoAlbum[], minRating: numb
 
   return randomAlbums;
 };
+
+export const getAlbumOverview = async (album: Album) => {
+  const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+
+  const headers = {
+    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+    'Content-Type': 'application/json',
+  };
+
+  const prompt = `Provide a 2 paragraph summary of the following album: Title: ${album.title}, Artist: ${album.artist}, Release date: ${album.date}, Genre: ${album.genre}. First paragraph is a short summary or anecdote in under 250 characters, while the second expands further on the album. Respond with summary only. Format response in lowercase except for acronyms and artists/albums/songs - in which case preserve original capitalization... be consistent with capitalization.`;
+
+  const payload: OpenAICompletionRequestBody = {
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  };
+
+  const res = await fetch(OPENAI_URL, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(payload),
+  });
+
+  const resJSON = await res.json() as OpenAICompletionResponse;
+
+  return resJSON.choices[0].message.content;
+}
 
 export const formatAlbumTitleAndArtist = (album: Album) => {
   return `${album.title} by ${album.artist}`

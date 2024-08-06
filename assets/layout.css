@@ -12,7 +12,8 @@
   --max-content-width: 480px;
 }
 
-.page-layout > * {
+.page-layout > *,
+.enter-scale {
   opacity: 0;
   scale: var(--enter-scale);
   animation: grow-in var(--transition-duration) var(--easing) forwards;
