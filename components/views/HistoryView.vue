@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { HistoryAlbum } from '~/types/Album';
+import Alert from '~/components/Alert.vue';
 import IconEdit from '~/components/icons/IconEdit.vue';
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconSpotify from '~/components/icons/IconSpotify.vue';
 import IconCross from '~/components/icons/IconCross.vue';
+import IconLightbulb from '~/components/icons/IconLightbulb.vue';
 import { isAlbumLiked, isAlbumLogged } from '~/utilities/history';
 
 type Props = {
@@ -51,6 +53,14 @@ const handleDoneEditing = () => isEdit.value = false;
   <div class="page-layout">
     <div class="history">
       <button class="view-back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
+
+      <Alert class="ai-disclaimer" dismiss-id="tip-overview">
+        <template #icon>
+          <IconLightbulb />
+        </template>
+
+        <div>tip: after spinning, click the album cover to get a brief ai-generated overview.</div>
+      </Alert>
       
       <h1 class="view-heading">
         <span>history</span>

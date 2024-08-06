@@ -3,8 +3,8 @@ import { ref, watch, onMounted, onUnmounted } from 'vue';
 import IconGenre from '~/components/icons/IconGenre.vue';
 import type { Album, ShuffleStatus } from '~/types/Album';
 import { getAlbumImage } from '~/utilities/album';
-import IconChevronLeft from './icons/IconChevronLeft.vue';
-import IconSparkle from './icons/IconSparkle.vue';
+import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
+import IconSparkle from '~/components/icons/IconSparkle.vue';
 
 const props = defineProps<{
   album: Album;
@@ -157,7 +157,12 @@ onUnmounted(() => {
 
         <div class="overview-body">{{ overview }}</div>
 
-        <p class="ai-disclaimer"><IconSparkle /> note: ai can sometimes make mistakes.</p>
+        <Alert class="ai-disclaimer" dismiss-id="disclaimer-ai">
+          <template #icon>
+            <IconSparkle />
+          </template>
+          note: ai can be useful, but it can sometimes make mistakes.
+        </Alert>
       </div>
     </div>
 
@@ -227,9 +232,6 @@ onUnmounted(() => {
       scale: .95;
     }
   }
-  &.overview-open {
-    /* scale: .95; */
-  }
   &.overview-fetching {
     cursor: wait;
     animation: pulse 1s 1s ease infinite;
@@ -245,7 +247,7 @@ onUnmounted(() => {
       border-right-color: transparent;
       bottom: 0;
       left: 0;
-      margin: 12px;
+      margin: 16px;
       position: absolute;
       animation: spin 500ms linear infinite;
       background: var(--bg-surface-light);
@@ -327,9 +329,11 @@ onUnmounted(() => {
   animation: flip-in .5s ease forwards;
   backface-visibility: hidden;
 
-  & > * {
-    padding: var(--spacing-1);
-  }
+}
+
+.overview-body,
+.overview-heading {
+  padding: var(--spacing-1);
 }
 
 @keyframes flip-in {
@@ -377,17 +381,7 @@ onUnmounted(() => {
 }
 
 .ai-disclaimer {
-  font-size: 14px;
-  background-color: var(--bg-surface);
   margin: var(--spacing-2) var(--spacing-1);
-  border: 2px solid var(--on-surface);
-  border-radius: 4px;
-  & svg {
-    vertical-align: middle;
-    height: 1.25em;
-    width: 1.25em;
-    margin-inline-end: .5em;
-  }
 }
 
 @keyframes spinTopToBottom {
