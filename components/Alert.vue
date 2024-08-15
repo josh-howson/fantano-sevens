@@ -49,6 +49,7 @@ const dismissAlert = () => {
   max-width: fit-content;
   font-size: 14px;
   display: flex;
+  gap: var(--spacing-1);
   align-items: start;
   background-color: var(--bg-surface-light);
   border: 2px solid var(--on-surface);
