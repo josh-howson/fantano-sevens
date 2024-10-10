@@ -64,16 +64,20 @@ export const getAlbumOverview = async (album: Album) => {
     'Content-Type': 'application/json',
   };
 
-  const prompt = `Provide a 2 paragraph summary of the following album: Title: ${album.title}, Artist: ${album.artist}, Release date: ${album.date}, Genre: ${album.genre}. First paragraph is a short summary or anecdote in under 250 characters, while the second expands further on the album. Respond with summary only. Format response in lowercase except for acronyms and artists/albums/songs - in which case preserve original capitalization... be consistent with capitalization.`;
+  const messages: { role: "user" | "system"; content: string}[] = [
+    {
+      role: 'system',
+      content: `You provide a 2 paragraph summaries of musical albums. User will provide the album's title, artist, release date and genre on the first line. on the second line will be the transcript of the full review. Your job is to summarize it concisely to give a preview to a listener who has not yet listened to the album. First paragraph is a short summary or anecdote in under 250 characters, while the second expands further on the album and listening notes/fantano's opinion on it. Respond with summary only. Format response in lowercase except for acronyms and artists/albums/songs - in which case preserve original capitalization... be consistent with capitalization.`,
+    },
+    {
+      role: 'user',
+      content: `TITLE: ${album.title}, ARTIST: ${album.artist}, RELEASE_DATE: ${album.date}, GENRE: ${album.genre}.\n\n TRANSCRIPT: ${album.transcript}`,
+    },
+  ];
 
   const payload: OpenAICompletionRequestBody = {
     model: 'gpt-4o-mini',
-    messages: [
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
+    messages: messages,
   };
 
   const res = await fetch(OPENAI_URL, {

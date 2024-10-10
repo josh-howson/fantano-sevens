@@ -8,6 +8,7 @@ const props = defineProps<{
   album: Album;
   albumHistory: HistoryAlbum[];
   shuffleStatus: ShuffleStatus;
+  canShuffle: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -27,7 +28,7 @@ const handleStream = () => {
 
 <template>
   <div :class="['album-actions', shuffleStatus === 'picked' && 'picked']">
-    <button class="reshuffle button-big button-secondary" @click="handleShuffle" :disabled="shuffleStatus === 'shuffling'" aria-label="pick again" title="pick again">
+    <button class="reshuffle button-big button-secondary" @click="handleShuffle" :disabled="shuffleStatus === 'shuffling' || !canShuffle" aria-label="pick again" title="pick again">
       <IconRedo />
     </button>
 

@@ -17,7 +17,8 @@ const emit = defineEmits<{
 
 const albumCoverRef = ref<HTMLElement | null>(null);
 const overview: Ref<string> = ref('');
-const overviewStatus: Ref<'not-fetched' | 'fetching' | 'fetched'> = ref('not-fetched');
+type FetchStatus = 'not-fetched' | 'fetching' | 'fetched';
+const overviewStatus: Ref<FetchStatus> = ref('not-fetched');
 const isOverviewOpen: Ref<boolean> = ref(false);
 let animationFrameId: number;
 let accumulatedRotation = 0;
@@ -54,7 +55,7 @@ function getRotationAngle(matrix: string): number {
   return Math.round(Math.atan2(m21, m22) * (180 / Math.PI)) % 360;
 }
 
-const getOverview = async () => {
+const fetchOverview = async () => {
   overviewStatus.value = 'fetching';
   try {
     const response = await fetch(`/api/albumOverview`, {
@@ -70,7 +71,7 @@ const getOverview = async () => {
 }
 
 const openOverview = () => {
-  if (overviewStatus.value === 'not-fetched') getOverview();
+  if (overviewStatus.value === 'not-fetched') fetchOverview();
   if (props.shuffleStatus === 'picked') {
     isOverviewOpen.value = true;
   }
@@ -95,7 +96,6 @@ watch(
         accumulatedRotation = 0;
         detectRotation();
       }
-      // clear overview
       resetOverview();
     } else {
       cancelAnimationFrame(animationFrameId);

@@ -3,10 +3,9 @@ import { Album } from '~/types/Album';
 import { getAlbumOverview } from '~/utilities/album';
 
 export default eventHandler(async (event) => {
-
-  const body = await readBody(event);
-  const album = JSON.parse(body) as Album;
   try {
+    const body = await readBody(event);
+    const album = JSON.parse(body) as Album;
     const albumOverview = await getAlbumOverview(album);
     return send(event, JSON.stringify(albumOverview), 'application/json');
   } catch (error) {

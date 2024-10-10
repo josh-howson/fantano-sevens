@@ -14,13 +14,11 @@ import { trackEvent } from '~/utilities/tracking';
 
 const SHUFFLE_DURATION = 4000;
 
-let latestRequestId = 0;
 const view: Ref<'picker' | 'history' | 'settings'> = ref('picker');
 const minRating = ref(7);
 const nextRandomAlbums: Ref<Album[]> = ref([]);
 const randomAlbums: Ref<Album[]> = ref([]);
 const currentAlbum: Ref<Album | null> = ref(null);
-const isFetching = ref(true);
 const shuffleStatus: Ref<ShuffleStatus> = ref('init');
 const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
@@ -28,43 +26,37 @@ const deferredPrompt = ref();
 const isInstallShown = ref(false);
 const sessionShuffleCount = ref(0);
 
+const { data, error, status, refresh } = useFetch<Album[]>('/api/randomAlbums', {
+  query: {
+    minRating: minRating.value,
+  },
+  cache: 'no-cache',
+});
+
 const isShowBigButton = computed(() => shuffleStatus.value === 'init');
-const isBigButtonDisabled = computed(() => isFetching.value);
-const bigButtonText = computed(() => isFetching.value ? 'loading...' : 'pick a random album');
+const isBigButtonDisabled = computed(() => status.value === 'pending');
+const bigButtonText = computed(() => status.value === 'pending' ? 'loading...' : 'pick a random album');
 
-let abortController: AbortController | null = null;
+watch(data, async (newValue) => {
+  if (newValue) {
+    nextRandomAlbums.value = newValue;
+    try {
+      const preloadPromises = nextRandomAlbums.value.map((album) => {
+        const albumCoverUrl = getAlbumImage(album, 'medium');
+        return albumCoverUrl ? preloadImage(albumCoverUrl.url) : Promise.resolve();
+      });
 
-const fetchNextRandomAlbums = async () => {
-  if (abortController) {
-    abortController.abort();
-  }
-  abortController = new AbortController();
-  const requestId = ++latestRequestId;
-  isFetching.value = true;
-  try {
-    const response = await fetch(`/api/randomAlbums?minRating=${minRating.value}`, {
-      signal: abortController.signal
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch random albums. ${response.statusText}`);
+      await Promise.all(preloadPromises)
+    } catch (error) {
+      console.error('There was an error preloading the image:', error);
     }
-    const albums = await response.json() as Album[];
-    if (requestId === latestRequestId) {
-      nextRandomAlbums.value = albums;
-    }
-
-    const preloadPromises = nextRandomAlbums.value.map((album) => {
-      const albumCoverUrl = getAlbumImage(album, 'medium');
-      return albumCoverUrl ? preloadImage(albumCoverUrl.url) : Promise.resolve();
-    });
-
-    await Promise.all(preloadPromises);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    isFetching.value = false;
   }
-};
+}, { immediate: true });
+
+watch([status, error], (newValue) => {
+  if (status.value === 'error')
+    console.error('There has been an error!', newValue);
+}, { immediate: true });
 
 let shuffleInterval: NodeJS.Timeout;
 
@@ -75,7 +67,7 @@ const showFinalAlbum = () => {
 
 const applyPreloadedAlbums = () => {
   randomAlbums.value = nextRandomAlbums.value;
-  fetchNextRandomAlbums();
+  refresh();
 };
 
 const shuffleByOne = () => {
@@ -196,11 +188,9 @@ watch([minRating, view], () => {
   setMinRatingCookie(minRating.value);
   // delay fetching until back on picker view
   if (view.value === 'picker') {
-    fetchNextRandomAlbums();
+    refresh();
   }
 });
-
-onMounted(fetchNextRandomAlbums);
 
 onMounted(syncAlbumHistoryRef);
 
@@ -223,69 +213,47 @@ onBeforeMount(() => {
     <div :class="[
       'top-controls',
       shuffleStatus === 'shuffling' && 'shuffling',
-      ]">
-      <button v-if="isInstallShown" class="install button-icon button-secondary" @click="handleInstall" title="install app" aria-label="install app">
+    ]">
+      <button v-if="isInstallShown" class="install button-icon button-secondary" @click="handleInstall"
+        title="install app" aria-label="install app">
         <IconInstall />
       </button>
 
-      <button class="settings button-icon button-secondary" @click="handleShowSettings" title="settings" aria-label="settings">
+      <button class="settings button-icon button-secondary" @click="handleShowSettings" title="settings"
+        aria-label="settings">
         <IconGear />
       </button>
 
-      <button class="show-history button-icon button-secondary" @click="handleShowHistory" aria-label="History" title="my history">
+      <button class="show-history button-icon button-secondary" @click="handleShowHistory" aria-label="History"
+        title="my history">
         <IconHistory />
-        
-        <div v-if="albumHistory.length" class="history-count">{{ albumHistory.length < 10 ? albumHistory.length : '9+' }}</div>
+
+        <div v-if="albumHistory.length" class="history-count">{{ albumHistory.length < 10 ? albumHistory.length : '9+'
+            }}</div>
       </button>
     </div>
-   
-    <button
-      class="button-big button-primary"
-      @click="handleShuffle"
-      :disabled="isBigButtonDisabled"
-      v-if="isShowBigButton"
-    >
+
+    <button class="button-big button-primary" @click="handleShuffle" :disabled="isBigButtonDisabled"
+      v-if="isShowBigButton">
       {{ bigButtonText }}
     </button>
 
     <KeepAlive>
-      <AlbumInfo
-        v-if="currentAlbum"
-        :album="currentAlbum"
-        :shuffleStatus="shuffleStatus"
-        :albumHistory="albumHistory"
-        @flip="handleAlbumFlip"
-      />
+      <AlbumInfo v-if="currentAlbum" :album="currentAlbum" :shuffleStatus="shuffleStatus" :albumHistory="albumHistory"
+        @flip="handleAlbumFlip" />
     </KeepAlive>
 
     <div class="bottom-controls">
-      <AlbumActions
-        v-if="currentAlbum"
-        :albumHistory="albumHistory"
-        :album="currentAlbum"
-        :shuffleStatus="shuffleStatus"
-        @history-add="handleAddAlbumToHistory"
-        @shuffle="handleShuffle"
-        @stream="handleStream"
-      />
+      <AlbumActions v-if="currentAlbum" :albumHistory="albumHistory" :album="currentAlbum"
+        :shuffleStatus="shuffleStatus" :can-shuffle="status !== 'pending'" @history-add="handleAddAlbumToHistory"
+        @shuffle="handleShuffle" @stream="handleStream" />
     </div>
   </div>
 
-  <HistoryView
-    :album-history="albumHistory"
-    @close="handleCloseHistory"
-    @remove="handleRemoveFromHistory"
-    @log="handleLogAlbum"
-    @like="handleLikeAlbum"
-    @stream="handleStream"
-    v-else-if="view === 'history'"
-  />
+  <HistoryView :album-history="albumHistory" @close="handleCloseHistory" @remove="handleRemoveFromHistory"
+    @log="handleLogAlbum" @like="handleLikeAlbum" @stream="handleStream" v-else-if="view === 'history'" />
 
-  <SettingsView
-    @close="handleCloseSettings"
-    v-model="minRating"
-    v-else-if="view === 'settings'"
-  />
+  <SettingsView @close="handleCloseSettings" v-model="minRating" v-else-if="view === 'settings'" />
 
   <div v-else>an error occured :(</div>
 </template>
@@ -301,7 +269,7 @@ onBeforeMount(() => {
   width: 100%;
   min-height: 40px;
 
-  &.shuffling > button {
+  &.shuffling>button {
     opacity: 0;
     scale: 0;
     transition: all var(--transition-duration) var(--easing);
