@@ -5,7 +5,7 @@ export type FantanoAlbum = {
   score: number;
   date: string;
   genre: string;
-  transcript: string;
+  transcript?: string;
 };
 
 // The main type for use on the frontend

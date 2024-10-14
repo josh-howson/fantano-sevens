@@ -22,13 +22,16 @@ const currentAlbum: Ref<Album | null> = ref(null);
 const shuffleStatus: Ref<ShuffleStatus> = ref('init');
 const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
+const loggedAlbums = computed(() => albumHistory.value.filter(album => !!album.logged));
 const deferredPrompt = ref();
 const isInstallShown = ref(false);
 const sessionShuffleCount = ref(0);
 
 const { data, error, status, refresh } = useFetch<Album[]>('/api/randomAlbums', {
-  query: {
-    minRating: minRating.value,
+  method: 'POST',
+  body: {
+    minRating: minRating,
+    loggedAlbums: loggedAlbums,
   },
   cache: 'no-cache',
 });

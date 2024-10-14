@@ -15,16 +15,23 @@ const getSpotifyAccessToken = async (clientId: string, clientSecret: string): Pr
   return data.access_token;
 };
 
-export const getRandomAlbums = async (allAlbums: FantanoAlbum[], minRating: number) => {
+
+export const getRandomAlbums = async (allAlbums: FantanoAlbum[], minRating: number, loggedAlbums: HistoryAlbum[]) => {
   const ALBUM_COUNT = 10;
   const config = useRuntimeConfig();
   const token = await getSpotifyAccessToken(config.spotifyClientId, config.spotifyClientSecret);
 
   if (minRating < 0 || minRating > 10) throw new Error(`The minRating must be between 1 and 10. Provided: ${minRating}`);
-  const albumPool = allAlbums.filter(album => album.score >= minRating);
+  const albumPool = allAlbums.filter(album => 
+    album.score >= minRating && 
+    !loggedAlbums.some(loggedAlbum => 
+      loggedAlbum.artist === album.artist && loggedAlbum.title === album.title
+    )
+  );
   const randomAlbums: Album[] = [];
 
   do {
+    if (albumPool.length < 1) throw new Error('User has logged all albums!');
     const randomIndex = Math.floor(Math.random() * albumPool.length);
     const randomAlbum = albumPool[randomIndex];
     // remove from the pool
@@ -67,7 +74,7 @@ export const getAlbumOverview = async (album: Album) => {
   const messages: { role: "user" | "system"; content: string}[] = [
     {
       role: 'system',
-      content: `You provide a 2 paragraph summaries of musical albums. User will provide the album's title, artist, release date and genre on the first line. on the second line will be the transcript of the full review. Your job is to summarize it concisely to give a preview to a listener who has not yet listened to the album. First paragraph is a short summary or anecdote in under 250 characters, while the second expands further on the album and listening notes/fantano's opinion on it. Respond with summary only. Format response in lowercase except for acronyms and artists/albums/songs - in which case preserve original capitalization... be consistent with capitalization.`,
+      content: `You provide a 2 paragraph summaries of musical albums. User will provide the album's title, artist, release date and genre on the first line. on the second line will be the transcript of the full review. Your job is to summarize it concisely to give a preview to a listener who has not yet listened to the album. First paragraph is a short summary or anecdote in under 250 characters, while the second expands further on the album and listening notes/fantano's opinion on it. Respond with summary only. And if transcript is missing, omit this paragraph. Format response in lowercase except for acronyms and artists/albums/songs - in which case preserve original capitalization... be consistent with capitalization.`,
     },
     {
       role: 'user',
