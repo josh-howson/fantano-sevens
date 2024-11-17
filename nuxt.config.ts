@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     '@/assets/reset.css',
     '@/assets/typography.css',
     '@/assets/variables.css',
+    '@/assets/animation.css',
   ],
 
   app: {

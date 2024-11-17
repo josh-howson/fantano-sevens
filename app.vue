@@ -20,6 +20,7 @@ import IconInstall from '~/components/icons/IconInstall.vue';
 import IconGear from '~/components/icons/IconGear.vue';
 import { trackEvent } from '~/utilities/tracking';
 import IconSparkle from './components/icons/IconSparkle.vue';
+import IconLightbulb from './components/icons/IconLightbulb.vue';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -36,6 +37,7 @@ const deferredPrompt = ref();
 const isInstallable = ref(false);
 const isPromptingToInstallPwa = ref(false);
 const sessionShuffleCount = ref(0);
+const pwaPickAgainClicked = ref(false);
 
 const { data, error, status, refresh } = useFetch<Album[]>('/api/randomAlbums', {
   method: 'POST',
@@ -44,6 +46,7 @@ const { data, error, status, refresh } = useFetch<Album[]>('/api/randomAlbums', 
     loggedAlbums: loggedAlbums,
   },
   cache: 'no-cache',
+  watch: false,
 });
 
 const isShowBigButton = computed(() => shuffleStatus.value === 'init' && !isPromptingToInstallPwa.value);
@@ -93,12 +96,16 @@ const shuffleByOne = () => {
 };
 
 const getShouldPromptToInstall = (): boolean => {
-  const spinsToPromptOn = [2, 8, 21, 55, 144];
+  const spinsToPromptOn = [7, 20, 50];
   if (!isInstallable.value) return false;
 
   const lifetimeSpins = getLifetimeSpins();
-  // if (!spinsToPromptOn.includes(lifetimeSpins)) return false;
-  if (lifetimeSpins % 3 !== 0) return false;
+  if (
+    !spinsToPromptOn.includes(lifetimeSpins) ||
+    // also prompt every 125
+    lifetimeSpins > 0 &&
+    lifetimeSpins % 125 === 0
+  ) return false;
 
   return true;
 };
@@ -214,6 +221,14 @@ const handleRemoveFromHistory = (album: HistoryAlbum) => {
   });
 }
 
+const handlePwaPromptPickAgain = () => {
+  pwaPickAgainClicked.value = true;
+  setTimeout(() => {
+    handleShuffle();
+    pwaPickAgainClicked.value = false;
+  }, 3000);
+}
+
 watch([minRating, view], () => {
   setMinRatingCookie(minRating.value);
   // delay fetching until back on picker view
@@ -239,7 +254,11 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="page-layout" v-if="view === 'picker'" :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }">
+  <div
+    class="page-layout"
+    v-if="view === 'picker'"
+    :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }"
+  >
     <div :class="[
       'top-controls',
       shuffleStatus === 'shuffling' && 'shuffling',
@@ -254,22 +273,29 @@ onBeforeMount(() => {
         <IconInstall />
       </button>
 
-      <button class="settings button-icon button-secondary" @click="handleShowSettings" title="settings"
+      <button
+        class="settings button-icon button-secondary"
+        @click="handleShowSettings"
+        title="settings"
         aria-label="settings">
         <IconGear />
       </button>
 
-      <button class="show-history button-icon button-secondary" @click="handleShowHistory" aria-label="History"
-        title="my history">
+      <button
+        class="show-history button-icon button-secondary"
+        @click="handleShowHistory"
+        aria-label="History"
+        title="history"
+      >
         <IconHistory />
 
-        <div v-if="albumHistory.length" class="history-count">{{
-          albumHistory.length < 10 ? albumHistory.length : '9+'
-        }}</div>
+        <div
+          v-if="albumHistory.length"
+          class="history-count">
+          {{albumHistory.length < 10 ? albumHistory.length : '9+'}}
+        </div>
       </button>
     </div>
-
-    {{getLifetimeSpins()}}
 
     <button
       class="button-big button-primary"
@@ -279,21 +305,37 @@ onBeforeMount(() => {
       {{ bigButtonText }}
     </button>
 
-    <template v-if="isPromptingToInstallPwa">
-      <div class="pwa-install-prompt">
-        <IconSparkle height="32" width="32" />
+    <div
+      class="pwa-install-prompt"
+      v-if="isPromptingToInstallPwa && !pwaPickAgainClicked"
+    >
+      <IconSparkle height="32" width="32" />
 
-        <div class="pwa-title">discover any new music yet?</div>
+      <div class="pwa-title">discover any new music yet?</div>
 
-        <div>it looks like you’re enjoying the site. for an even better experience, install it to your device.</div>
+      <div>it looks like you’re enjoying the site. for an even better experience, install it to your device.</div>
 
-        <button class="button-medium button-primary" @click="handleInstall">
-          <IconInstall />
-          <span>install</span>
-        </button>
-      </div>
-    </template>
-    <KeepAlive v-else>
+
+      <button
+        class="button-medium button-primary"
+        @click="handleInstall"
+        v-if="isInstallable"
+      >
+        <IconInstall />
+
+        <span>install</span>
+      </button>
+    </div>
+
+    <Alert v-if="isPromptingToInstallPwa && pwaPickAgainClicked">
+      <template #icon>
+        <IconLightbulb />
+      </template>
+
+      <div>if you want to install it later, press the <IconInstall /> button in the top left.</div>
+    </Alert>
+
+    <KeepAlive v-if="!isPromptingToInstallPwa">
       <AlbumInfo
         v-if="currentAlbum"
         :album="currentAlbum"
@@ -303,21 +345,23 @@ onBeforeMount(() => {
     </KeepAlive>
 
     <div class="bottom-controls">
-      <AlbumActions
-        v-if="currentAlbum && !isPromptingToInstallPwa"
-        :albumHistory="albumHistory"
-        :album="currentAlbum"
-        :shuffleStatus="shuffleStatus"
-        :can-shuffle="status !== 'pending'"
-        @history-add="handleAddAlbumToHistory"
-        @shuffle="handleShuffle"
-        @stream="handleStream"
-      />
+      <KeepAlive>
+        <AlbumActions
+          v-if="currentAlbum && !isPromptingToInstallPwa"
+          :albumHistory="albumHistory"
+          :album="currentAlbum"
+          :shuffleStatus="shuffleStatus"
+          :can-shuffle="status !== 'pending'"
+          @history-add="handleAddAlbumToHistory"
+          @shuffle="handleShuffle"
+          @stream="handleStream"
+        />
+      </KeepAlive>
 
       <button
-        class="button-big button-secondary"
-        @click="handleShuffle"
-        v-if="isPromptingToInstallPwa"
+        :class="['pick-again button-big button-secondary']"
+        @click="handlePwaPromptPickAgain"
+        v-if="isPromptingToInstallPwa && !pwaPickAgainClicked"
         >
           <IconsIconRedo />
 
@@ -326,10 +370,21 @@ onBeforeMount(() => {
     </div>
   </div>
 
-  <HistoryView :album-history="albumHistory" @close="handleCloseHistory" @remove="handleRemoveFromHistory"
-    @log="handleLogAlbum" @like="handleLikeAlbum" @stream="handleStream" v-else-if="view === 'history'" />
+  <HistoryView
+    :album-history="albumHistory"
+    @close="handleCloseHistory"
+    @remove="handleRemoveFromHistory"
+    @log="handleLogAlbum"
+    @like="handleLikeAlbum"
+    @stream="handleStream"
+    v-else-if="view === 'history'"
+  />
 
-  <SettingsView @close="handleCloseSettings" v-model="minRating" v-else-if="view === 'settings'" />
+  <SettingsView
+    @close="handleCloseSettings"
+    v-model="minRating"
+    v-else-if="view === 'settings'"
+  />
 
   <div v-else>an error occured :(</div>
 </template>
@@ -398,11 +453,11 @@ onBeforeMount(() => {
 
 .pwa-install-prompt {
   padding: var(--spacing-2);
+  gap: var(--spacing-1);
   border-radius: 16px;
   display: flex;
   flex-flow: column nowrap;
   align-items: start;
-  gap: var(--spacing-1);
   background: var(--bg-surface-light);
   border: 3px solid var(--on-surface);
   max-width: 400px;
@@ -411,6 +466,21 @@ onBeforeMount(() => {
 .pwa-title {
   font-weight: bold;
   font-size: 20px;
+}
+
+.install-later {
+  padding: var(--spacing-2);
+  border-radius: 16px;
+  background: var(--bg-surface-light);
+  border: 3px solid var(--on-surface);
+  max-width: 400px;
+}
+
+.pick-again {
+  opacity: 0;
+  visibility: hidden;
+  animation: delayed-show 2s forwards;
+  animation-delay: 3s;
 }
 
 @media (max-height: 700px) {

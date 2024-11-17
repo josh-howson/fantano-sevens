@@ -28,11 +28,21 @@ const handleStream = () => {
 
 <template>
   <div :class="['album-actions', shuffleStatus === 'picked' && 'picked']">
-    <button class="reshuffle button-big button-secondary" @click="handleShuffle" :disabled="shuffleStatus === 'shuffling' || !canShuffle" aria-label="pick again" title="pick again">
+    <button
+      class="reshuffle button-big button-secondary"
+      @click="handleShuffle"
+      :disabled="shuffleStatus === 'shuffling' || !canShuffle"
+      aria-label="pick again"
+      title="pick again"
+    >
       <IconRedo />
     </button>
 
-    <button class="stream button-big button-primary" @click="handleStream">
+    <button
+      class="stream button-big button-primary"
+      @click="handleStream"
+      title="stream this album"
+    >
       <IconSpotify />  
 
       <span class="text">stream</span>
