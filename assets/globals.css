@@ -4,6 +4,11 @@ body {
   overscroll-behavior: none;
 }
 
+a {
+  color: var(--on-surface);
+  font-weight: bold;
+}
+
 .view-back {
   padding: 16px 0 !important;
 }
@@ -11,10 +16,10 @@ body {
 .view-heading {
   display: flex;
   align-items: center;
-  margin-top: var(--spacing-2);
+  margin-block-start: var(--spacing-2);
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: var(--spacing-2);
+  margin-block-end: var(--spacing-2);
 }
 
 .button-big,

@@ -64,6 +64,8 @@ const handleClearClick = () => {
           </button>
         </div>
       </div>
+
+      <div class="contact-dev">have feedback or questions? contact the developer at <a href="mailto:josh.b.howson@gmail.com">josh.b.howson@gmail.com</a> or jsh#5707 on discord.</div>
     </div>
   </div>
 </template>
@@ -71,7 +73,11 @@ const handleClearClick = () => {
 <style scoped>
 .settings {
   width: 100%;
+  height: 100%;
   max-width: var(--max-content-width);
+  display: flex;
+  flex-flow: column nowrap;
+  padding-block-end: var(--spacing-2);
 }
 
 .setting-panel {
@@ -83,7 +89,7 @@ const handleClearClick = () => {
   padding: var(--spacing-1);
   border-radius: 12px;
   border: 2px solid var(--on-surface);
-  margin-bottom: var(--spacing-1);
+  margin-block-end: var(--spacing-1);
 }
 
 .min-rating {
@@ -102,5 +108,9 @@ const handleClearClick = () => {
 
 .shift-to-end {
   margin-inline-start: auto;
+}
+
+.contact-dev {
+  margin-block-start: auto;
 }
 </style>

@@ -395,8 +395,8 @@ onBeforeMount(() => {
   align-items: center;
   justify-content: end;
   gap: var(--spacing-1);
-  margin-left: auto;
-  margin-bottom: auto;
+  margin-inline-start: auto;
+  margin-block-end: auto;
   width: 100%;
   min-height: 40px;
 
@@ -431,8 +431,8 @@ onBeforeMount(() => {
   font-size: 11px;
   font-weight: bold;
   text-align: center;
-  margin-top: -6px;
-  margin-right: -6px;
+  margin-block-start: -6px;
+  margin-inline-end: -6px;
 }
 
 .history {
@@ -448,7 +448,7 @@ onBeforeMount(() => {
   gap: var(--spacing-2);
   align-items: center;
   flex-direction: column;
-  margin-top: auto;
+  margin-block-start: auto;
 }
 
 .pwa-install-prompt {

@@ -117,7 +117,7 @@ const handleDoneEditing = () => isEdit.value = false;
 }
 
 .edit {
-  margin-left: var(--spacing-1);
+  margin-inline-start: var(--spacing-1);
 }
 
 .edit:disabled {
@@ -133,7 +133,7 @@ const handleDoneEditing = () => isEdit.value = false;
 .actions {
   display: flex;
   gap: var(--spacing-1);
-  margin-top: var(--spacing-1\/2);
+  margin-block-start: var(--spacing-1\/2);
   flex-flow: row wrap;
 }
 
@@ -173,7 +173,7 @@ const handleDoneEditing = () => isEdit.value = false;
 }
 
 .album-text .log-date {
-  margin-top: var(--spacing-1\/4);
+  margin-block-start: var(--spacing-1\/4);
 }
 
 .actions button {
@@ -197,7 +197,7 @@ const handleDoneEditing = () => isEdit.value = false;
     --big-factor: 1.2;
   }
   .edit {
-    margin-left: auto;
+    margin-inline-start: auto;
   }
 }
 </style>
