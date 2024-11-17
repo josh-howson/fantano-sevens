@@ -269,6 +269,8 @@ onBeforeMount(() => {
       </button>
     </div>
 
+    {{getLifetimeSpins()}}
+
     <button
       class="button-big button-primary"
       @click="handleShuffle"
