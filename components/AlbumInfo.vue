@@ -336,6 +336,10 @@ onUnmounted(() => {
   padding: var(--spacing-1);
 }
 
+.overview-body {
+  line-height: 1.5;
+}
+
 @keyframes flip-in {
   0% {
     transform: rotateY(180deg);
