@@ -59,3 +59,28 @@ export const isAlbumLiked = (history: HistoryAlbum[], album: HistoryAlbum): bool
   const foundAlbum = history.find(h => h.artist === album.artist && h.title === album.title);
   return foundAlbum ? foundAlbum.liked : false;
 };
+
+export const incrementLifetimeSpins = (): void => {
+  const storageKey = 'lifetimeSpins';
+  const currentValue = localStorage.getItem(storageKey);
+
+  let spins = currentValue ? parseInt(currentValue, 10) : 0;
+
+  if (isNaN(spins)) {
+    spins = 0;
+  }
+
+  spins += 1;
+
+  localStorage.setItem(storageKey, spins.toString());
+};
+
+export const getLifetimeSpins = (): number => {
+  const storageKey = 'lifetimeSpins';
+  const currentValue = localStorage.getItem(storageKey);
+
+  const spins = currentValue ? parseInt(currentValue, 10) : 0;
+
+  return isNaN(spins) ? 0 : spins;
+};
+
