@@ -77,7 +77,7 @@ export const incrementLifetimeSpins = (): void => {
 
 export const getLifetimeSpins = (): number => {
   const storageKey = 'lifetimeSpins';
-  const currentValue = localStorage.getItem(storageKey);
+  const currentValue = localStorage && localStorage.getItem(storageKey);
 
   const spins = currentValue ? parseInt(currentValue, 10) : 0;
 
