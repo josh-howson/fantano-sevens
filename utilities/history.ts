@@ -76,7 +76,7 @@ export const incrementLifetimeSpins = (): void => {
 };
 
 export const getLifetimeSpins = (): number => {
-  if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') return -1;
+  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return -1;
   const storageKey = 'lifetimeSpins';
   const currentValue = localStorage.getItem(storageKey);
 
