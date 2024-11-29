@@ -21,8 +21,11 @@ import IconGear from '~/components/icons/IconGear.vue';
 import { trackEvent } from '~/utilities/tracking';
 import IconSparkle from './components/icons/IconSparkle.vue';
 import IconLightbulb from './components/icons/IconLightbulb.vue';
+import useVibration from './composables/useVibration';
 
 const SHUFFLE_DURATION = 4000;
+
+const { vibrate } = useVibration();
 
 const view: Ref<'picker' | 'history' | 'settings'> = ref('picker');
 const minRating = ref(7);
@@ -150,6 +153,7 @@ const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
 
 const handleAlbumFlip = () => {
   shuffleByOne();
+  vibrate('shortest');
 };
 
 const syncAlbumHistoryRef = () => {
