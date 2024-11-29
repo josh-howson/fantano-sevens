@@ -22,12 +22,10 @@ import { trackEvent } from '~/utilities/tracking';
 import IconSparkle from './components/icons/IconSparkle.vue';
 import IconLightbulb from './components/icons/IconLightbulb.vue';
 import useVibration from './composables/useVibration';
-import useAudioPlayer from './composables/useAudioPlayer';
 
 const SHUFFLE_DURATION = 4000;
 
 const { vibrate } = useVibration();
-const { playSound } = useAudioPlayer();
 
 const view: Ref<'picker' | 'history' | 'settings'> = ref('picker');
 const minRating = ref(7);
@@ -99,7 +97,6 @@ const shuffleByOne = () => {
     shuffleIndex.value = 0;
   currentAlbum.value = randomAlbums.value[shuffleIndex.value];
   vibrate('shortest');
-  playSound('tick');
 };
 
 const getShouldPromptToInstall = (): boolean => {
