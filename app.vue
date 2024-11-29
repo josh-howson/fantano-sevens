@@ -96,6 +96,7 @@ const shuffleByOne = () => {
   else
     shuffleIndex.value = 0;
   currentAlbum.value = randomAlbums.value[shuffleIndex.value];
+  vibrate('shortest');
 };
 
 const getShouldPromptToInstall = (): boolean => {
@@ -153,7 +154,6 @@ const handleStream = (album: HistoryAlbum, historyAdd: boolean = false) => {
 
 const handleAlbumFlip = () => {
   shuffleByOne();
-  vibrate('shortest');
 };
 
 const syncAlbumHistoryRef = () => {
