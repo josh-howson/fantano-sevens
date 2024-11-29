@@ -22,7 +22,7 @@ import { trackEvent } from '~/utilities/tracking';
 import IconSparkle from './components/icons/IconSparkle.vue';
 import IconLightbulb from './components/icons/IconLightbulb.vue';
 import useVibration from './composables/useVibration';
-import useAudioPlayer from './composables/useAudioPlayer.client';
+import useAudioPlayer from './composables/useAudioPlayer';
 
 const SHUFFLE_DURATION = 4000;
 
