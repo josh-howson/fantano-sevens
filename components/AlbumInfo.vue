@@ -146,8 +146,9 @@ onUnmounted(() => {
     >
       <img :src="getAlbumImage(album, shuffleStatus !== 'picked' ? 'medium' : 'medium').url" />
 
+      <!--
       <div :class="['fantano-score', shuffleStatus === 'picked' && 'picked']">fantano {{ album.score }}</div>
-
+      -->
       <div class="overview" v-if="overview && isOverviewOpen">
         <div class="overview-heading">
           <button class="close-overview view-back icon-link-button enter-scale" @click.stop="closeOverview"><IconChevronLeft />back</button>
@@ -261,7 +262,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  /* border-radius: 8px; */
   border: 3px solid var(--on-surface);
   transition: transform var(--transition-duration);
   transform-style: preserve-3d;
