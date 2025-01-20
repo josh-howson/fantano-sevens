@@ -36,7 +36,7 @@ export default defineNuxtConfig({
       ],
       title: 'fantano sevens',
       link: [
-        { rel: 'manifest', href: '/manifest.json' },
+        { rel: 'manifest', href: '/manifest.json?v=2' },
       ],
       htmlAttrs: {
         lang: 'en',
