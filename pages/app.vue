@@ -77,7 +77,7 @@ watch([status, error], (newValue) => {
     console.error('There has been an error!', newValue);
 }, { immediate: true });
 
-let shuffleInterval: NodeJS.Timeout;
+let shuffleInterval: NodeJS.Timeout | null = null;
 
 const showFinalAlbum = () => {
   shuffleInterval && clearInterval(shuffleInterval);
