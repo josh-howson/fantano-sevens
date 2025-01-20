@@ -7,6 +7,7 @@ useHead({
       as: 'image',
       type: 'image/png',
       tagPriority: 1,
+      fetchpriority: 'high',
     },
   ],
 });
