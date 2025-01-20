@@ -6,6 +6,7 @@ useHead({
       href: 'https://pj7xtf4phc.ufs.sh/f/RCdZyxsXc5qD3rTOrZkZogae654WVLTPKYhGQmFDxjvfAItS',
       as: 'image',
       type: 'image/png',
+      tagPriority: 1,
     },
   ],
 });
