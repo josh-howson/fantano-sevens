@@ -28,7 +28,7 @@ useHead({
       </div>
 
       <div class="hero-visual">
-        <img alt="" width="540" height="884" src="https://i.ibb.co/7jrP03m/home-hero.png" />
+        <img alt="" width="540" height="884" src="https://pj7xtf4phc.ufs.sh/f/RCdZyxsXc5qDd5Wn0OEC7So9PpYBGDH3Oe6tkNWL0mJxfibs" />
       </div>
     </section>
 
@@ -42,7 +42,7 @@ useHead({
       </div>
 
       <div class="visual">
-        <img alt="" width="437" height="233" src="https://i.ibb.co/HCvWMcz/home-good-stuff.png" loading="lazy" />
+        <img alt="" width="437" height="233" src="https://pj7xtf4phc.ufs.sh/f/RCdZyxsXc5qDUrHjjTanKYE9bWRsmtl41dXjH8qrxpOADNiC" loading="lazy" />
       </div>
     </section>
 
@@ -56,7 +56,7 @@ useHead({
       </div>
 
       <div class="visual">
-        <img alt="" width="419" height="714" src="https://i.ibb.co/7KRb2TS/home-keep-track.png" loading="lazy" />
+        <img alt="" width="419" height="714" src="https://pj7xtf4phc.ufs.sh/f/RCdZyxsXc5qDig54iAnajIZFGArKJo7QYvTSe1q0LybdWNtp" loading="lazy" />
       </div>
     </section>
 
