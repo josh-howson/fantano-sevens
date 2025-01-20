@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import usePwaInstall from '@/composables/usePwaInstall';
+import IconArrowRight from '~/components/icons/IconArrowRight.vue';
+import IconInstall from '~/components/icons/IconInstall.vue';
+
+const { handleInstall, isInstallable } = usePwaInstall();
+
 useHead({
   link: [
     {
@@ -18,7 +24,15 @@ useHead({
     <header class="header">
       <NuxtLink to="/">fantanosevens</NuxtLink>
       
-      <!-- <button class="button-icon button-secondary" title="install"><IconInstall /></button> -->
+      <button
+        v-if="isInstallable"
+        class="install button-icon button-secondary"
+        @click="handleInstall"
+        title="install app"
+        aria-label="install app"
+      >
+        <IconInstall />
+      </button>
     </header>
     <section class="hero">
       <div class="hero-content">
@@ -26,7 +40,7 @@ useHead({
 
         <p>with a single click, spin to get new music recommendations spanning all genres.</p>
 
-        <NuxtLink to="/app" class="button-big button-primary">discover music now &rarr;</NuxtLink>
+        <NuxtLink to="/app" class="button-big button-primary">discover music now <IconArrowRight /></NuxtLink>
       </div>
 
       <div class="hero-visual">
@@ -40,7 +54,7 @@ useHead({
 
         <p>all album recommendations are vetted by trusted music critics. no more sifting through mediocre playlists. you can hit play with confidence you’re listening to the best.</p>
 
-        <NuxtLink to="/app">discover music now &rarr;</NuxtLink>
+        <NuxtLink to="/app">discover music now <IconArrowRight /></NuxtLink>
       </div>
 
       <div class="visual">
@@ -54,7 +68,7 @@ useHead({
 
         <p>we save the albums you listen to, so you can come back to log, save or stream your favorite albums again anytime.</p>
 
-        <NuxtLink to="/app">discover music now &rarr;</NuxtLink>
+        <NuxtLink to="/app">discover music now <IconArrowRight /></NuxtLink>
       </div>
 
       <div class="visual">

@@ -22,10 +22,12 @@ import { trackEvent } from '~/utilities/tracking';
 import IconSparkle from '@/components/icons/IconSparkle.vue';
 import IconLightbulb from '@/components/icons/IconLightbulb.vue';
 import useVibration from '@/composables/useVibration';
+import usePwaInstall from '@/composables/usePwaInstall';
 
 const SHUFFLE_DURATION = 4000;
 
 const { vibrate } = useVibration();
+const { handleInstall, isInstallable } = usePwaInstall();
 
 const view: Ref<'picker' | 'history' | 'settings'> = ref('picker');
 const minRating = ref(7);
@@ -37,7 +39,7 @@ const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
 const loggedAlbums = computed(() => albumHistory.value.filter(album => !!album.logged));
 const deferredPrompt = ref();
-const isInstallable = ref(false);
+// const isInstallable = ref(false);
 const isPromptingToInstallPwa = ref(false);
 const sessionShuffleCount = ref(0);
 const pwaPickAgainClicked = ref(false);
@@ -172,12 +174,12 @@ const handleShowSettings = () => {
   view.value = 'settings';
 };
 
-const handleInstall = async () => {
-  deferredPrompt.value.prompt();
-  const { outcome } = await deferredPrompt.value.userChoice;
-  isInstallable.value = !outcome;
-  trackEvent('install');
-};
+// const handleInstall = async () => {
+//   deferredPrompt.value.prompt();
+//   const { outcome } = await deferredPrompt.value.userChoice;
+//   isInstallable.value = !outcome;
+//   trackEvent('install');
+// };
 
 const handleCloseSettings = () => {
   view.value = 'picker';
@@ -248,13 +250,13 @@ onBeforeMount(() => {
   if (minRatingFromCookie) minRating.value = minRatingFromCookie;
 });
 
-onBeforeMount(() => {
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt.value = e;
-    isInstallable.value = true;
-  });
-});
+// onBeforeMount(() => {
+//   window.addEventListener('beforeinstallprompt', (e) => {
+//     e.preventDefault();
+//     deferredPrompt.value = e;
+//     isInstallable.value = true;
+//   });
+// });
 </script>
 
 <template>

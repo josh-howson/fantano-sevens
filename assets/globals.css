@@ -32,11 +32,11 @@ a {
   font-weight: bold;
 }
 
-button {
+:is(button, a) {
   transition: all var(--transition-duration-fast) var(--easing);
 }
 
-button:not(:disabled):active {
+:is(button, a):not(:disabled):active {
   scale: .95;
 }
 
