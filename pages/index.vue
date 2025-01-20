@@ -29,7 +29,7 @@ useHead({
       </div>
 
       <div class="hero-visual">
-        <img alt="" width="540" height="884" src="https://pj7xtf4phc.ufs.sh/f/RCdZyxsXc5qD3rTOrZkZogae654WVLTPKYhGQmFDxjvfAItS" />
+        <img alt="" width="540" height="884" src="https://pj7xtf4phc.ufs.sh/f/RCdZyxsXc5qD3rTOrZkZogae654WVLTPKYhGQmFDxjvfAItS" loading="eager" />
       </div>
     </section>
 
