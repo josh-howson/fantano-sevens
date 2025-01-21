@@ -2,6 +2,7 @@
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import { resetCookiesAndLocalStorage } from '~/utilities/cookie';
 import { getAlbumHistory } from '~/utilities/history';
+import { exportUserData, importUserData } from '~/utilities/backup';
 
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -10,6 +11,7 @@ const emit = defineEmits<{
 const minRating = defineModel({ default: 7 });
 const historyCount = ref(getAlbumHistory());
 const clearDataClickCount = ref(0);
+const fileInput = ref<HTMLInputElement | null>(null);
 
 const handleBack = () => {
   emit('close');
@@ -23,6 +25,21 @@ const handleClearClick = () => {
     clearDataClickCount.value++;
   }
 }
+
+const triggerFileInput = () => {
+  fileInput.value?.click();
+};
+
+const handleFileUpload = async (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (file) {
+    try {
+      await importUserData(file);
+    } catch (error) {
+      alert(error);
+    }
+  }
+};
 </script>
 
 <template>
@@ -47,6 +64,28 @@ const handleClearClick = () => {
         </div>
 
         <MinimumScore v-model="minRating" />
+      </div>
+
+      <div class="setting-panel">
+        <div>
+          <h2 class="heading">backup or restore data</h2>
+
+          <p>downloads a "user-data.json" file. find it in your downloads folder, then import it from another device to transfer all your settings and history.</p>
+
+          <div class="restore-data-buttons">
+            <button class="button-medium button-secondary" @click="exportUserData">download my data</button>
+
+            <input
+              ref="fileInput"
+              type="file"
+              accept=".json"
+              @change="handleFileUpload"
+              style="display: none"
+            />
+
+            <button class="button-medium button-secondary" @click="triggerFileInput">import user-data.json</button>
+          </div>
+        </div>
       </div>
 
       <div class="setting-panel">
@@ -108,6 +147,12 @@ const handleClearClick = () => {
 
 .shift-to-end {
   margin-inline-start: auto;
+}
+
+.restore-data-buttons {
+  display: flex;
+  gap: var(--spacing-1);
+  flex-flow: row wrap;
 }
 
 .contact-dev {
