@@ -54,7 +54,9 @@
       "label": "fantano sevens random album picker"
     }
   ],
-  "launch_handler": "focus-existing",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "id": "fantanosevens",
   "orientation": "any",
   "handle_links": "not-preferred",
