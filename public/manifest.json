@@ -53,5 +53,11 @@
       "form_factor": "wide",
       "label": "fantano sevens random album picker"
     }
-  ]
+  ],
+  "launch_handler": "focus-existing",
+  "id": "fantanosevens",
+  "orientation": "any",
+  "handle_links": "not-preferred",
+  "dir": "ltr",
+  "lang": "en"
 }
