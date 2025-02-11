@@ -1,8 +1,7 @@
 body {
   margin: 0;
   background-color: var(--bg-color);
-  /* overscroll-behavior: none; */
-  overscroll-behavior-y: contain;
+  overscroll-behavior: none;
 }
 
 a {
