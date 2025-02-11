@@ -2,7 +2,11 @@
   "name": "fantano sevens",
   "short_name": "fantano sevens",
   "start_url": "/app",
-  "display_override": ["fullscreen", "minimal-ui"],
+  "display_override": [
+    "fullscreen",
+    "minimal-ui",
+    "window-controls-overlay"
+  ],
   "display": "standalone",
   "background_color": "#FFEC8B",
   "theme_color": "#FFEC8B",
@@ -27,7 +31,7 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots" : [
+  "screenshots": [
     {
       "src": "screenshot-narrow-1.png",
       "sizes": "750x1334",
