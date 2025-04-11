@@ -116,10 +116,6 @@ const handleDoneEditing = () => isEdit.value = false;
   --big-factor: 1;
 }
 
-.view-back {
-  align-self: flex-start;
-}
-
 .edit {
   margin-inline-start: var(--spacing-1);
 }
