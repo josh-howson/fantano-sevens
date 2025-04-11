@@ -233,7 +233,7 @@ onUnmounted(() => {
     }
   }
   &.overview-fetching {
-    cursor: wait;
+    cursor: progress;
     animation: pulse 1s 1s ease infinite;
     &::after {
       --size: 14px;
