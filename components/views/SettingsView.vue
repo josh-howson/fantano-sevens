@@ -104,7 +104,11 @@ const handleFileUpload = async (event: Event) => {
         </div>
       </div>
 
-      <div class="contact-dev">have feedback or questions? contact the developer at <a href="mailto:josh.b.howson@gmail.com">josh.b.howson@gmail.com</a> or jsh#5707 on discord.</div>
+      <div class="contact-dev">
+        <p>have feedback or questions? contact the developer at <a href="mailto:josh.b.howson@gmail.com">josh.b.howson@gmail.com</a> or jsh#5707 on discord.</p>
+
+        <p><NuxtLink to="/">home</NuxtLink></p>
+      </div>
     </div>
   </div>
 </template>
@@ -156,6 +160,7 @@ const handleFileUpload = async (event: Event) => {
 }
 
 .contact-dev {
+  align-items: flex-start;
   margin-block-start: auto;
   padding-block-end: var(--spacing-2);
 }
