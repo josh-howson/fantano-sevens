@@ -157,6 +157,6 @@ const handleFileUpload = async (event: Event) => {
 
 .contact-dev {
   margin-block-start: auto;
-  margin-block-end: var(--spacing-2);
+  padding-block-end: var(--spacing-2);
 }
 </style>
