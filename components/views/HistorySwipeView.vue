@@ -94,7 +94,7 @@ const handleBack = () => {
       <div
         :class="['card', swipeStatus]"
         @touchstart="e => index === lastCardIndex && handleTouchStart(e)"
-        @touchmove="e => index === lastCardIndex && handleTouchMove(e)"
+        @touchmove.prevent="e => index === lastCardIndex && handleTouchMove(e)"
         @touchend="e => index === lastCardIndex && handleTouchEnd(e)"
         v-for="(album, index) in unloggedAlbums"
         :style="index === lastCardIndex && (() => {
