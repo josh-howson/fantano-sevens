@@ -16,6 +16,8 @@ type Emits = {
 
 const emit = defineEmits<Emits>();
 
+const vibrate = useVibration();
+
 type TouchCoordinates = {x: number; y: number};
 
 const initialTouchXY: Ref<TouchCoordinates | null> = ref(null);
@@ -47,7 +49,10 @@ const handleTouchMove = (e: TouchEvent) => {
     };
 
     if (swipeDistance?.value?.x > (initialBoundingClientRect?.value?.width ?? 0) / 2) {
-      swipeStatus.value = 'like-unconfirmed';
+      if (swipeStatus.value !== 'dislike-unconfirmed') {
+        swipeStatus.value = 'like-unconfirmed';
+        vibrate.vibrate('shortest');
+      }
     } else if (swipeDistance?.value?.x < -(initialBoundingClientRect?.value?.width ?? 0) / 2) {
       swipeStatus.value = 'dislike-unconfirmed';
     } else {
@@ -89,7 +94,7 @@ const handleBack = () => {
       <div
         :class="['card', swipeStatus]"
         @touchstart="e => index === lastCardIndex && handleTouchStart(e)"
-        @touchmove="e => index === lastCardIndex && handleTouchMove(e)"
+        @touchmove.prevent.self="e => index === lastCardIndex && handleTouchMove(e)"
         @touchend="e => index === lastCardIndex && handleTouchEnd(e)"
         v-for="(album, index) in unloggedAlbums"
         :style="index === lastCardIndex && (() => {
