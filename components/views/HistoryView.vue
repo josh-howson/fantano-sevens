@@ -6,10 +6,10 @@ import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconSpotify from '~/components/icons/IconSpotify.vue';
 import IconCross from '~/components/icons/IconCross.vue';
 import IconLightbulb from '~/components/icons/IconLightbulb.vue';
-import { isAlbumLiked, isAlbumLogged } from '~/utilities/history';
+import { getUnloggedHistoryAlbums, isAlbumLiked, isAlbumLogged } from '~/utilities/history';
 
 type Props = {
-  albumHistory: HistoryAlbum[]
+  albumHistory: HistoryAlbum[];
 }
 
 const props = defineProps<Props>();
@@ -20,9 +20,11 @@ const emit = defineEmits<{
   (e: 'stream', album: HistoryAlbum): void;
   (e: 'remove', album: HistoryAlbum): void;
   (e: 'close'): void;
+  (e: 'show:history-swipe'): void;
 }>();
 
 const isEdit = ref(false);
+const unloggedHistoryAlbums = computed(() => getUnloggedHistoryAlbums(props.albumHistory));
 
 const handleRemove = (album: HistoryAlbum) => {
   emit('remove', album);
@@ -44,6 +46,10 @@ const handleBack = () => {
   emit('close');
 };
 
+const handleShowHistorySwipe = () => {
+  emit('show:history-swipe');
+};
+
 const handleEdit = () => isEdit.value = true;
 
 const handleDoneEditing = () => isEdit.value = false;
@@ -60,6 +66,14 @@ const handleDoneEditing = () => isEdit.value = false;
         </template>
 
         <div>tip: after spinning, click the album cover to get a brief ai-generated overview.</div>
+      </Alert>
+
+      <Alert v-if="unloggedHistoryAlbums.length" class="swipe-alert">
+        <template #icon>
+          <IconsIconSparkle />
+        </template>
+        <div>you have unlogged albums. swipe now.</div>
+        <button class="button-medium button-primary" @click="handleShowHistorySwipe">swipe <IconsIconArrowRight /></button>
       </Alert>
       
       <h1 class="view-heading">
@@ -190,6 +204,10 @@ const handleDoneEditing = () => isEdit.value = false;
 
 .actions button:hover {
   text-decoration: underline;
+}
+
+.swipe-alert {
+  margin-top: var(--spacing-1);
 }
 
 @media (min-width: 480px) {

@@ -10,11 +10,13 @@ import {
   removeFromHistory,
   incrementLifetimeSpins,
   getLifetimeSpins,
+  getLoggedHistoryAlbums,
 } from '~/utilities/history';
 import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
 import { formatAlbumTitleAndArtist, getAlbumImage } from '~/utilities/album';
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/views/HistoryView.vue';
+import HistorySwipeView from '~/components/views/HistorySwipeView.vue';
 import SettingsView from '~/components/views/SettingsView.vue';
 import IconInstall from '~/components/icons/IconInstall.vue';
 import IconGear from '~/components/icons/IconGear.vue';
@@ -29,7 +31,7 @@ const SHUFFLE_DURATION = 4000;
 const { vibrate } = useVibration();
 const { handleInstall, isInstallable } = usePwaInstall();
 
-const view: Ref<'picker' | 'history' | 'settings'> = ref('picker');
+const view: Ref<'picker' | 'history' | 'history-swipe' | 'settings'> = ref('picker');
 const minRating = ref(7);
 const nextRandomAlbums: Ref<Album[]> = ref([]);
 const randomAlbums: Ref<Album[]> = ref([]);
@@ -37,8 +39,9 @@ const currentAlbum: Ref<Album | null> = ref(null);
 const shuffleStatus: Ref<ShuffleStatus> = ref('init');
 const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
-const loggedAlbums = computed(() => albumHistory.value.filter(album => !!album.logged));
-const deferredPrompt = ref();
+const loggedAlbums = computed(() => getLoggedHistoryAlbums(albumHistory.value));
+const unloggedAlbums = computed(() => albumHistory.value.filter(album => !album.logged));
+// const deferredPrompt = ref();
 // const isInstallable = ref(false);
 const isPromptingToInstallPwa = ref(false);
 const sessionShuffleCount = ref(0);
@@ -162,16 +165,16 @@ const syncAlbumHistoryRef = () => {
   albumHistory.value = getAlbumHistory();
 };
 
-const handleShowHistory = () => {
+const showHistoryView = () => {
   view.value = 'history';
 }
 
-const handleCloseHistory = () => {
-  view.value = 'picker';
-};
-
 const handleShowSettings = () => {
   view.value = 'settings';
+};
+
+const handleShowHistorySwipe = () => {
+  view.value = 'history-swipe';
 };
 
 // const handleInstall = async () => {
@@ -181,7 +184,7 @@ const handleShowSettings = () => {
 //   trackEvent('install');
 // };
 
-const handleCloseSettings = () => {
+const showPickerView = () => {
   view.value = 'picker';
 };
 
@@ -289,7 +292,7 @@ onBeforeMount(() => {
 
       <button
         class="show-history button-icon button-secondary"
-        @click="handleShowHistory"
+        @click="showHistoryView"
         aria-label="History"
         title="history"
       >
@@ -378,18 +381,27 @@ onBeforeMount(() => {
 
   <HistoryView
     :album-history="albumHistory"
-    @close="handleCloseHistory"
+    @close="showPickerView"
     @remove="handleRemoveFromHistory"
     @log="handleLogAlbum"
     @like="handleLikeAlbum"
     @stream="handleStream"
+    @show:history-swipe="handleShowHistorySwipe"
     v-else-if="view === 'history'"
   />
 
   <SettingsView
-    @close="handleCloseSettings"
+    @close="showPickerView"
     v-model="minRating"
     v-else-if="view === 'settings'"
+  />
+
+  <HistorySwipeView
+    v-else-if="view === 'history-swipe'"
+    :unlogged-albums="unloggedAlbums"
+    @like="handleLikeAlbum"
+    @dislike="handleLikeAlbum"
+    @close="showHistoryView"
   />
 
   <div v-else>an error occured :(</div>

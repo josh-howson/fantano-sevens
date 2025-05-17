@@ -85,3 +85,10 @@ export const getLifetimeSpins = (): number => {
   return isNaN(spins) ? 0 : spins;
 };
 
+export const getLoggedHistoryAlbums = (albumHistory: HistoryAlbum[]) => {
+  return albumHistory.filter(album => !!album.logged);
+};
+
+export const getUnloggedHistoryAlbums = (albumHistory: HistoryAlbum[]) => {
+  return albumHistory.filter(album => !album.logged);
+};
