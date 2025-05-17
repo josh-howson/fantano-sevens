@@ -94,7 +94,7 @@ const handleBack = () => {
       <div
         :class="['card', swipeStatus]"
         @touchstart="e => index === lastCardIndex && handleTouchStart(e)"
-        @touchmove.prevent.self="e => index === lastCardIndex && handleTouchMove(e)"
+        @touchmove="e => index === lastCardIndex && handleTouchMove(e)"
         @touchend="e => index === lastCardIndex && handleTouchEnd(e)"
         v-for="(album, index) in unloggedAlbums"
         :style="index === lastCardIndex && (() => {
@@ -160,6 +160,8 @@ const handleBack = () => {
   margin-block-end: calc(0px - var(--spacing-1));
 }
 .card {
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
