@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch } from 'vue';
 import IconGenre from '~/components/icons/IconGenre.vue';
 import type { Album, ShuffleStatus } from '~/types/Album';
 import { getAlbumImage } from '~/utilities/album';
+import { useFlipDetection } from '~/composables/useFlipDetection';
 import IconChevronLeft from '~/components/icons/IconChevronLeft.vue';
 import IconSparkle from '~/components/icons/IconSparkle.vue';
 
@@ -20,40 +21,10 @@ const overview: Ref<string> = ref('');
 type FetchStatus = 'not-fetched' | 'fetching' | 'fetched';
 const overviewStatus: Ref<FetchStatus> = ref('not-fetched');
 const isOverviewOpen: Ref<boolean> = ref(false);
-let animationFrameId: number;
-let accumulatedRotation = 0;
-let lastAngle = 0;
 
-function detectRotation() {
-  if (!albumCoverRef.value) return;
-
-  const matrix = window.getComputedStyle(albumCoverRef.value).transform;
-  const angle = getRotationAngle(matrix);
-
-  const angleDifference = angle - lastAngle;
-  if (!isNaN(angleDifference)) {
-    accumulatedRotation += angleDifference;
-  }
-
-  const flipThreshold = 180;
-  if (Math.abs(accumulatedRotation) >= flipThreshold) {
-    emit('flip');
-    accumulatedRotation %= flipThreshold;
-  }
-
-  lastAngle = angle;
-  animationFrameId = requestAnimationFrame(detectRotation);
-}
-
-function getRotationAngle(matrix: string): number {
-  if (!matrix || matrix === 'none') return 0;
-
-  const values = matrix.split('(')[1].split(')')[0].split(',');
-  const m21 = parseFloat(values[4]);
-  const m22 = parseFloat(values[5]);
-
-  return Math.round(Math.atan2(m21, m22) * (180 / Math.PI)) % 360;
-}
+const { startDetection, stopDetection } = useFlipDetection(albumCoverRef, () => {
+  emit('flip');
+});
 
 const fetchOverview = async () => {
   overviewStatus.value = 'fetching';
@@ -91,33 +62,14 @@ watch(
   () => props.shuffleStatus,
   (newStatus) => {
     if (newStatus === 'shuffling') {
-      if (albumCoverRef.value) {
-        lastAngle = getRotationAngle(window.getComputedStyle(albumCoverRef.value).transform);
-        accumulatedRotation = 0;
-        detectRotation();
-      }
+      startDetection();
       resetOverview();
     } else {
-      cancelAnimationFrame(animationFrameId);
+      stopDetection();
     }
   },
   { immediate: true }
 );
-
-// Start detection if shuffling when the component mounts
-onMounted(() => {
-  if (props.shuffleStatus === 'shuffling') {
-    if (albumCoverRef.value) {
-      lastAngle = getRotationAngle(window.getComputedStyle(albumCoverRef.value).transform);
-      accumulatedRotation = 0;
-      detectRotation();
-    }
-  }
-});
-
-onUnmounted(() => {
-  cancelAnimationFrame(animationFrameId);
-});
 </script>
 
 <template>
