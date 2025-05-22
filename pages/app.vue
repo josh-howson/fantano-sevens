@@ -11,7 +11,7 @@ import {
   incrementLifetimeSpins,
   getLifetimeSpins,
 } from '~/utilities/history';
-import { getMinRatingFromCookie, setMinRatingCookie } from '~/utilities/preference';
+import { getMinRating, setMinRating } from '~/utilities/preference';
 import { formatAlbumTitleAndArtist, getAlbumImage } from '~/utilities/album';
 import IconHistory from '~/components/icons/IconHistory.vue';
 import HistoryView from '~/components/views/HistoryView.vue';
@@ -23,6 +23,7 @@ import IconSparkle from '@/components/icons/IconSparkle.vue';
 import IconLightbulb from '@/components/icons/IconLightbulb.vue';
 import useVibration from '@/composables/useVibration';
 import usePwaInstall from '@/composables/usePwaInstall';
+import { migrateCookiesToLocalStorage } from '~/utilities/cookie';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -236,7 +237,7 @@ const handlePwaPromptPickAgain = () => {
 }
 
 watch([minRating, view], () => {
-  setMinRatingCookie(minRating.value);
+  setMinRating(minRating.value);
   // delay fetching until back on picker view
   if (view.value === 'picker') {
     refresh();
@@ -246,7 +247,8 @@ watch([minRating, view], () => {
 onMounted(syncAlbumHistoryRef);
 
 onBeforeMount(() => {
-  const minRatingFromCookie = getMinRatingFromCookie();
+  migrateCookiesToLocalStorage();
+  const minRatingFromCookie = getMinRating();
   if (minRatingFromCookie) minRating.value = minRatingFromCookie;
 });
 

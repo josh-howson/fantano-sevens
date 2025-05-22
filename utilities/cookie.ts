@@ -37,3 +37,15 @@ export const resetCookiesAndLocalStorage = () => {
 
   window.location.reload();
 };
+
+const COOKIES_TO_MIGRATE = ['minRating']; // Add more cookie keys here if needed
+
+export const migrateCookiesToLocalStorage = () => {
+  for (const cookieName of COOKIES_TO_MIGRATE) {
+    const cookieValue = getCookie(cookieName);
+    if (cookieValue !== null) {
+      localStorage.setItem(cookieName, cookieValue);
+      deleteCookie(cookieName);
+    }
+  }
+};

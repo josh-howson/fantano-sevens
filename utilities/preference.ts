@@ -1,15 +1,13 @@
-import { getCookie, setCookie } from '~/utilities/cookie';
-
-export const getMinRatingFromCookie = (): number | null => {
-  const cookieValue = getCookie('minRating');
-  if (!cookieValue) {
+export const getMinRating = (): number | null => {
+  const storedValue = localStorage.getItem('minRating');
+  if (!storedValue) {
     return null;
   }
 
-  const parsedCookie = Number(cookieValue);
-  return Number.isInteger(parsedCookie) ? parsedCookie : null;
+  const parsed = Number(storedValue);
+  return Number.isInteger(parsed) ? parsed : null;
 };
 
-export const setMinRatingCookie = (minRating: number) => {
-  setCookie('minRating', JSON.stringify(minRating));
-}
+export const setMinRating = (minRating: number) => {
+  localStorage.setItem('minRating', JSON.stringify(minRating));
+};
