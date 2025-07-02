@@ -24,6 +24,29 @@ const emit = defineEmits<{
 
 const isEdit = ref(false);
 
+type HistoryChip = 'logged' | 'liked' | 'unlogged' | 'unliked';
+
+const chipFilterSelection: Ref<HistoryChip | 'none'> = ref('none');
+const chips: Ref<HistoryChip[]> = ref(['logged', 'unlogged', 'liked', 'unliked']);
+
+const filteredAlbumHistory = computed(() => {
+  if (chipFilterSelection.value === 'liked')
+    return props.albumHistory.filter(album => album.liked);
+  else if (chipFilterSelection.value === 'unliked')
+    return props.albumHistory.filter(album => !album.liked);
+  else if (chipFilterSelection.value === 'logged')
+    return props.albumHistory.filter(album => album.logged);
+  else if (chipFilterSelection.value === 'unlogged')
+    return props.albumHistory.filter(album => !album.logged);
+  else
+    return props.albumHistory;
+});
+
+const handleChipClick = (e: Event, chip: HistoryChip) => {
+  (e.target as Element).scrollIntoView({behavior: 'smooth', inline: 'center'});
+  chipFilterSelection.value = chipFilterSelection.value === chip ? 'none' : chip;
+};
+
 const handleRemove = (album: HistoryAlbum) => {
   emit('remove', album);
 };
@@ -52,7 +75,9 @@ const handleDoneEditing = () => isEdit.value = false;
 <template>
   <div class="page-layout">
     <div class="history">
-      <button class="view-back icon-link-button" @click="handleBack"><IconChevronLeft />back</button>
+      <button class="view-back icon-link-button" @click="handleBack">
+        <IconChevronLeft />back
+      </button>
 
       <Alert class="ai-disclaimer" dismiss-id="tip-overview">
         <template #icon>
@@ -61,18 +86,30 @@ const handleDoneEditing = () => isEdit.value = false;
 
         <div>tip: after spinning, click the album cover to get a brief ai-generated overview.</div>
       </Alert>
-      
+
       <h1 class="view-heading">
         <span>history</span>
-        
-          <button v-if="isEdit" class="edit icon-link-button" @click="handleDoneEditing"><IconEdit />done</button>
-          
-          <button v-else class="edit icon-link-button" @click="handleEdit" :disabled="!albumHistory.length"><IconEdit />edit</button>
+
+        <button v-if="isEdit" class="edit icon-link-button" @click="handleDoneEditing">
+          <IconEdit />done
+        </button>
+
+        <button v-else class="edit icon-link-button" @click="handleEdit" :disabled="!albumHistory.length">
+          <IconEdit />edit
+        </button>
       </h1>
 
       <template v-if="albumHistory.length">
+        <div class="history-chips">
+          <button :class="[
+            'button-chip button-small',
+            chipFilterSelection === chip ? 'button-primary' : 'button-secondary',
+          ]" v-for="chip in chips" @click="e => handleChipClick(e, chip)" :title="`filter only ${chip}`">{{ chip }}</button>
+          <button :class="['button-icon button-secondary']" title="clear filter" @click="chipFilterSelection = 'none'" v-if="chipFilterSelection !== 'none'"><IconCross /></button>
+        </div>
+
         <div class="list">
-          <div class="history-album" v-for="album in albumHistory">
+          <div class="history-album" v-for="album in filteredAlbumHistory">
             <img class="cover" :src="album.albumCoverUrl" />
 
             <div class="album-text">
@@ -92,10 +129,14 @@ const handleDoneEditing = () => isEdit.value = false;
                 </button>
               </div>
 
-              <div class="log-date" v-if="album.logDate">logged {{ new Date(album.logDate).toLocaleDateString('en-US').toLocaleLowerCase() }}</div>
+              <div class="log-date" v-if="album.logDate">logged {{ new
+                Date(album.logDate).toLocaleDateString('en-US').toLocaleLowerCase() }}</div>
             </div>
 
-            <button class="button-icon button-secondary" v-if="isEdit" @click="handleRemove(album)" title="remove from history" aria-label="remove from history"><IconCross /></button>
+            <button class="button-icon button-secondary" v-if="isEdit" @click="handleRemove(album)"
+              title="remove from history" aria-label="remove from history">
+              <IconCross />
+            </button>
           </div>
         </div>
       </template>
@@ -103,7 +144,9 @@ const handleDoneEditing = () => isEdit.value = false;
       <div v-else>
         <p>your history is empty!</p>
 
-        <p>come back after you've streamed, saved or logged an album, and you'll be able to keep track of and modify them here.</p>
+        <p>come back after you've streamed, saved or logged an album, and you'll be able to keep track of and modify
+          them
+          here.</p>
       </div>
     </div>
   </div>
@@ -122,6 +165,18 @@ const handleDoneEditing = () => isEdit.value = false;
 
 .edit:disabled {
   opacity: .5;
+}
+
+.history-chips {
+  --scrollbar-offset: 12px;
+  display: flex;
+  overflow: auto;
+  gap: var(--spacing-1\/2);
+  margin-bottom: calc(var(--spacing-1) - var(--scrollbar-offset));
+  padding-bottom: var(--scrollbar-offset);
+  margin-inline: calc(0px - (var(--spacing-1) + env(safe-area-inset-right)));
+  padding-inline: calc((var(--spacing-1) + env(safe-area-inset-right)));
+  scrollbar-width: none;
 }
 
 .list {
@@ -196,6 +251,7 @@ const handleDoneEditing = () => isEdit.value = false;
   .history {
     --big-factor: 1.2;
   }
+
   .edit {
     margin-inline-start: auto;
   }
