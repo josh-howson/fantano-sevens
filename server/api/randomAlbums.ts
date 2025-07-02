@@ -12,7 +12,6 @@ export default eventHandler(async (event) => {
     loggedAlbums: HistoryAlbum[];
   };
   const body = await readBody(event) as RequestBody;
-  // const { minRating, loggedAlbums } = JSON.parse(body) as RequestBody;
   const randomAlbums = await getRandomAlbums(allAlbums, Number(body.minRating), body.loggedAlbums);
 
   return send(event, JSON.stringify(randomAlbums), 'application/json');

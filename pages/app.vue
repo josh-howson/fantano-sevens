@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import type { Album, HistoryAlbum, ShuffleStatus } from '~/types/Album';
-import { preloadImage } from '~/utilities/image';
+import HistoryView from '~/components/views/HistoryView.vue';
+import IconGear from '~/components/icons/IconGear.vue';
+import IconHistory from '~/components/icons/IconHistory.vue';
+import IconInstall from '~/components/icons/IconInstall.vue';
+import IconLightbulb from '~/components/icons/IconLightbulb.vue';
+import IconSparkle from '~/components/icons/IconSparkle.vue';
+import SettingsView from '~/components/views/SettingsView.vue';
+import usePwaInstall from '~/composables/usePwaInstall';
+import useVibration from '~/composables/useVibration';
 import {
   addToHistory,
   getAlbumHistory,
@@ -11,19 +19,12 @@ import {
   incrementLifetimeSpins,
   getLifetimeSpins,
 } from '~/utilities/history';
-import { getMinRating, setMinRating } from '~/utilities/preference';
+import { VIEW, type View } from '~/utilities/view';
 import { formatAlbumTitleAndArtist, getAlbumImage } from '~/utilities/album';
-import IconHistory from '~/components/icons/IconHistory.vue';
-import HistoryView from '~/components/views/HistoryView.vue';
-import SettingsView from '~/components/views/SettingsView.vue';
-import IconInstall from '~/components/icons/IconInstall.vue';
-import IconGear from '~/components/icons/IconGear.vue';
-import { trackEvent } from '~/utilities/tracking';
-import IconSparkle from '@/components/icons/IconSparkle.vue';
-import IconLightbulb from '@/components/icons/IconLightbulb.vue';
-import useVibration from '@/composables/useVibration';
-import usePwaInstall from '@/composables/usePwaInstall';
+import { getMinRating, setMinRating } from '~/utilities/preference';
 import { migrateCookiesToLocalStorage } from '~/utilities/cookie';
+import { preloadImage } from '~/utilities/image';
+import { trackEvent } from '~/utilities/tracking';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -34,7 +35,7 @@ definePageMeta({
 const { vibrate } = useVibration();
 const { handleInstall, isInstallable } = usePwaInstall();
 
-const view: Ref<'picker' | 'history' | 'settings'> = ref('picker');
+const view: Ref<View> = ref(VIEW.PICKER);
 const minRating = ref(7);
 const nextRandomAlbums: Ref<Album[]> = ref([]);
 const randomAlbums: Ref<Album[]> = ref([]);
@@ -43,8 +44,6 @@ const shuffleStatus: Ref<ShuffleStatus> = ref('init');
 const shuffleIndex = ref(0);
 const albumHistory: Ref<HistoryAlbum[]> = ref([]);
 const loggedAlbums = computed(() => albumHistory.value.filter(album => !!album.logged));
-const deferredPrompt = ref();
-// const isInstallable = ref(false);
 const isPromptingToInstallPwa = ref(false);
 const sessionShuffleCount = ref(0);
 const pwaPickAgainClicked = ref(false);
@@ -84,7 +83,7 @@ watch([status, error], (newValue) => {
     console.error('There has been an error!', newValue);
 }, { immediate: true });
 
-let shuffleInterval: NodeJS.Timeout | null = null;
+let shuffleInterval: ReturnType<typeof setTimeout> | null = null;
 
 const showFinalAlbum = () => {
   shuffleInterval && clearInterval(shuffleInterval);
@@ -167,29 +166,6 @@ const syncAlbumHistoryRef = () => {
   albumHistory.value = getAlbumHistory();
 };
 
-const handleShowHistory = () => {
-  view.value = 'history';
-}
-
-const handleCloseHistory = () => {
-  view.value = 'picker';
-};
-
-const handleShowSettings = () => {
-  view.value = 'settings';
-};
-
-// const handleInstall = async () => {
-//   deferredPrompt.value.prompt();
-//   const { outcome } = await deferredPrompt.value.userChoice;
-//   isInstallable.value = !outcome;
-//   trackEvent('install');
-// };
-
-const handleCloseSettings = () => {
-  view.value = 'picker';
-};
-
 const handleAddAlbumToHistory = (album: HistoryAlbum) => {
   addToHistory(album);
   syncAlbumHistoryRef();
@@ -243,7 +219,7 @@ const handlePwaPromptPickAgain = () => {
 watch([minRating, view], () => {
   setMinRating(minRating.value);
   // delay fetching until back on picker view
-  if (view.value === 'picker') {
+  if (view.value === VIEW.PICKER) {
     refresh();
   }
 });
@@ -255,20 +231,12 @@ onBeforeMount(() => {
   const minRatingFromCookie = getMinRating();
   if (minRatingFromCookie) minRating.value = minRatingFromCookie;
 });
-
-// onBeforeMount(() => {
-//   window.addEventListener('beforeinstallprompt', (e) => {
-//     e.preventDefault();
-//     deferredPrompt.value = e;
-//     isInstallable.value = true;
-//   });
-// });
 </script>
 
 <template>
   <div
     class="page-layout"
-    v-if="view === 'picker'"
+    v-if="view === VIEW.PICKER"
     :style="{ '--shuffle-duration': `${SHUFFLE_DURATION}ms` }"
   >
     <div :class="[
@@ -286,16 +254,8 @@ onBeforeMount(() => {
       </button>
 
       <button
-        class="settings button-icon button-secondary"
-        @click="handleShowSettings"
-        title="settings"
-        aria-label="settings">
-        <IconGear />
-      </button>
-
-      <button
         class="show-history button-icon button-secondary"
-        @click="handleShowHistory"
+        @click="view = VIEW.HISTORY"
         aria-label="History"
         title="history"
       >
@@ -306,6 +266,14 @@ onBeforeMount(() => {
           class="history-count">
           {{albumHistory.length < 10 ? albumHistory.length : '9+'}}
         </div>
+      </button>
+
+            <button
+        class="settings button-icon button-secondary"
+        @click="view = VIEW.SETTINGS"
+        title="settings"
+        aria-label="settings">
+        <IconGear />
       </button>
     </div>
 
@@ -384,18 +352,18 @@ onBeforeMount(() => {
 
   <HistoryView
     :album-history="albumHistory"
-    @close="handleCloseHistory"
+    @close="view = VIEW.PICKER"
     @remove="handleRemoveFromHistory"
     @log="handleLogAlbum"
     @like="handleLikeAlbum"
     @stream="handleStream"
-    v-else-if="view === 'history'"
+    v-else-if="view === VIEW.HISTORY"
   />
 
   <SettingsView
-    @close="handleCloseSettings"
+    @close="view = VIEW.PICKER"
     v-model="minRating"
-    v-else-if="view === 'settings'"
+    v-else-if="view === VIEW.SETTINGS"
   />
 
   <div v-else>an error occured :(</div>
