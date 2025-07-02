@@ -2,8 +2,21 @@ import type { HistoryAlbum } from '~/types/Album';
 
 export const getAlbumHistory = (): HistoryAlbum[] => {
   const localStorageValue = localStorage.getItem('albumHistory');
-  return localStorageValue ? JSON.parse(localStorageValue) : [];
+
+  if (!localStorageValue) return [];
+
+  return JSON.parse(localStorageValue, (key, value) => {
+    if (
+      (key === 'streamDate' || key === 'logDate') &&
+      typeof value === 'string'
+    ) {
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? value : date;
+    }
+    return value;
+  });
 };
+
 
 const setAlbumHistory = (albums: HistoryAlbum[]): void => {
   localStorage.setItem('albumHistory', JSON.stringify(albums));
@@ -22,7 +35,7 @@ export const updateLogStatus = (album: HistoryAlbum, logStatus: boolean): void =
   const albumHistory = getAlbumHistory();
   const index = albumHistory.findIndex(a => a.artist === album.artist && a.title === album.title);
   if (index !== -1) {
-    albumHistory[index] = { ...albumHistory[index], logged: logStatus, logDate: logStatus ? new Date().toISOString() : undefined };
+    albumHistory[index] = { ...albumHistory[index], logged: logStatus, logDate: logStatus ? new Date() : undefined };
   } else if (logStatus) {
     albumHistory.push(album);
   }

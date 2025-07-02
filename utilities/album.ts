@@ -120,6 +120,7 @@ export const getHistoryAlbumFromAlbum = (album: Album, liked: boolean = false, l
     title: album.title,
     liked: liked,
     logged: logged,
+    streamDate: new Date(),
     spotifyUrl: getAlbumSpotifyUrl(album),
   };
 }
