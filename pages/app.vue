@@ -27,6 +27,10 @@ import { migrateCookiesToLocalStorage } from '~/utilities/cookie';
 
 const SHUFFLE_DURATION = 4000;
 
+definePageMeta({
+  ssr: false,
+});
+
 const { vibrate } = useVibration();
 const { handleInstall, isInstallable } = usePwaInstall();
 
