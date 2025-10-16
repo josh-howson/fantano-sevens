@@ -1,6 +1,11 @@
+<script setup lang="ts">
+import "@storedotapp/pwa-install-dialog";
+</script>
+
 <template>
   <NuxtRouteAnnouncer />
   <NuxtPage />
+  <pwa-install-dialog id="install-dialog" app="fantanosevens" />
 </template>
 
 <style>
