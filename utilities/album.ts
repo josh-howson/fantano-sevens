@@ -64,6 +64,7 @@ export const getRandomAlbums = async (allAlbums: FantanoAlbum[], minRating: numb
 };
 
 export const getAlbumOverview = async (album: Album) => {
+  return;
   const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 
   const headers = {

@@ -42,6 +42,7 @@ const fetchOverview = async () => {
 }
 
 const openOverview = () => {
+  return;
   if (overviewStatus.value === 'not-fetched') fetchOverview();
   if (props.shuffleStatus === 'picked') {
     isOverviewOpen.value = true;
@@ -168,7 +169,7 @@ watch(
   width: 100%;
   aspect-ratio: 1 / 1;
   transition: all var(--transition-duration) var(--easing);
-  &.overview-fetched.overview-open {
+  /* &.overview-fetched.overview-open {
     aspect-ratio: 3 / 4;
     & > img {
       animation: flip-in-alt .5s ease forwards;
@@ -206,7 +207,7 @@ watch(
       outline: calc(var(--size) * .5) solid var(--bg-surface-light);
       outline-offset: -1px;
     }
-  }
+  } */
 }
 
 .album-cover img {
@@ -280,7 +281,6 @@ watch(
   line-height: 1.5;
   animation: flip-in .5s ease forwards;
   backface-visibility: hidden;
-
 }
 
 .overview-body,
