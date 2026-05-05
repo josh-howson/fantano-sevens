@@ -74,7 +74,7 @@ export const getAlbumOverview = async (album: Album) => {
   const messages: { role: "user" | "system"; content: string}[] = [
     {
       role: 'system',
-      content: `You provide a 2 paragraph summaries of musical albums. User will provide the album's title, artist, release date and genre on the first line. on the second line will be the transcript of the full review. Your job is to summarize it concisely to give a preview to a listener who has not yet listened to the album. First paragraph is a short summary or anecdote in under 250 characters, while the second expands further on the album and listening notes/fantano's opinion on it. Respond with summary only. And if transcript is missing, omit this paragraph. Format response in lowercase except for acronyms and artists/albums/songs - in which case preserve original capitalization... be consistent with capitalization.`,
+      content: `You provide a 2 paragraph summary of musical albums. User will provide the album's title, artist, release date and genre on the first line. on the second line will be the transcript of the full review. Your job is to summarize it concisely to give a preview to a listener who has not yet listened to the album. First paragraph is a short summary or anecdote in under 250 characters, while the second expands further on the album and listening notes/fantano's opinion on it. Respond with summary only. And if transcript is missing, omit this paragraph. Format response in lowercase except for acronyms and artists/albums/songs - in which case preserve original capitalization... be consistent with capitalization.`,
     },
     {
       role: 'user',
