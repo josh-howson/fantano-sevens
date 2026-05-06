@@ -25,6 +25,7 @@ import { getMinRating, setMinRating } from '~/utilities/preference';
 import { migrateCookiesToLocalStorage } from '~/utilities/cookie';
 import { preloadImage } from '~/utilities/image';
 import { trackEvent } from '~/utilities/tracking';
+import { useWebHaptics } from 'web-haptics/vue';
 
 const SHUFFLE_DURATION = 4000;
 
@@ -32,7 +33,8 @@ definePageMeta({
   ssr: false,
 });
 
-const { vibrate } = useVibration();
+// const { vibrate } = useVibration();
+const { trigger } = useWebHaptics();
 const { handleInstall, isInstallable } = usePwaInstall();
 
 const view: Ref<View> = ref(VIEW.PICKER);
@@ -102,7 +104,12 @@ const shuffleByOne = () => {
   else
     shuffleIndex.value = 0;
   currentAlbum.value = randomAlbums.value[shuffleIndex.value];
-  vibrate('shortest');
+  // vibrate('shortest');
+  trigger(
+    [
+      { duration: 15 },
+    ],
+    { intensity: 0.4 });
 };
 
 const getShouldPromptToInstall = (): boolean => {
